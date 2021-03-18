@@ -6,6 +6,7 @@ local debug = {
 	
 	internal = {
 		logPrefix = "",
+		debugPrefix = "",
 		functionPrefixes = {},
 	},
 	
@@ -14,23 +15,75 @@ local debug = {
 }
 
 --===== set basic log functions =====--
-local function getFuncPrefix(func)
-	local prefix = debug.internal.functionPrefixes[func]
-	if prefix == nil then
-		return "", false
-	end	
-	return tostring(prefix.prefix), prefix.exclusive
+local function getDebugPrefix()
+	return debug.internal.debugPrefix
 end
-local function setFuncPrefix(prefix, exclusive, func)
-	local prefixTable = {}
+local function setDebugPrefix(prefix)
+	debug.internal.debugPrefix = tostring(prefix)
+end
+
+local function getFuncPrefix(stackLevel, fullPrefixStack)
+	local prefix, exclusive = "", false
+	local prefixTable
+	if fullPrefixStack == nil then fullPrefixStack = true end
 	
-	if func == nil then	
-		func = orgDebug.getinfo(2).func
+	if stackLevel == nil or type(stackLevel) == "number" then
+		prefix, exclusive, fullStack = getFuncPrefix(orgDebug.getinfo(stackLevel or 2).func)
+	elseif type(stackLevel) == "function" then
+		local prefixTable = debug.internal.functionPrefixes[stackLevel]
+		if prefixTable == nil then
+			return "", false
+		else
+			return tostring(prefixTable.prefix), prefixTable.exclusive, prefixTable.fullStack
+		end	
 	end
 	
-	prefixTable.prefix = prefix
-	prefixTable.exclusive = exclusive
-	debug.internal.functionPrefixes[func] = prefixTable
+	if fullPrefixStack and fullStack or fullStack == nil then
+		for stackLevel = stackLevel +1, math.huge do
+			local stackInfo = orgDebug.getinfo(stackLevel)
+			local stackPrefix = ""
+			local stackExclusive, fullStack
+		
+			if stackInfo == nil then break end
+		
+			stackPrefix, stackExclusive, fullStack = getFuncPrefix(stackInfo.func)
+			
+			if stackExclusive then
+				exclusive = true
+			end
+			
+			prefix = stackPrefix .. prefix
+			
+			if fullStack == false then
+				break
+			end
+		end
+	end
+	
+	return tostring(prefix), exclusive
+end
+local function setFuncPrefix(prefix, exclusive, noFullStack, stackLevel) 
+	local prefixTable = {}
+	local func
+	
+	if stackLevel == nil or type(stackLevel) == "number" then
+		func = orgDebug.getinfo(stackLevel or 2).func
+	elseif type(stackLevel) == "function" then
+		func = stackLevel
+	end
+	
+	if prefix ~= nil then
+		prefixTable.prefix = prefix
+		prefixTable.exclusive = exclusive
+		if noFullStack == false or noFullStack == nil then
+			prefixTable.fullStack = true
+		else
+			prefixTable.fullStack = false
+		end
+		debug.internal.functionPrefixes[func] = prefixTable
+	else
+		debug.internal.functionPrefixes[func] = nil
+	end
 end
 
 local function getLogPrefix()
@@ -46,7 +99,8 @@ end
 
 local function log(...)
 	local msgs = ""
-	local funcPrefix, exclusiveFuncPrefix = getFuncPrefix(orgDebug.getinfo(2).func)
+	--local funcPrefix, exclusiveFuncPrefix = getFuncPrefix(orgDebug.getinfo(2).func)
+	local funcPrefix, exclusiveFuncPrefix = getFuncPrefix(3)
 	
 	if exclusiveFuncPrefix then
 		msgs = funcPrefix .. msgs
@@ -58,20 +112,14 @@ local function log(...)
 		msgs = msgs .. tostring(msg) .. "     "
 	end
 	
-	print("[" .. os.date("%X") .. "]" .. msgs)
+	print("[" .. os.date("%X") .. "]" .. getDebugPrefix() .. msgs)
+	setDebugPrefix("")
 end
 
 local dlog
 if global.devConf.devMode then
 	dlog = function(...)
-		local funcPrefix, exclusiveFuncPrefix = getFuncPrefix(orgDebug.getinfo(2).func)
-		local prefix = "[DEBUG]"
-		
-		if not exclusiveFuncPrefix then
-			prefix = prefix .. getLogPrefix()
-		end
-		setFuncPrefix(prefix .. funcPrefix, true)
-		
+		setDebugPrefix("[DEBUG]")
 		log(...)
 	end
 else
@@ -80,11 +128,18 @@ end
 
 --===== debug function =====--
 dlog("set debug functions")
+
 debug.log = log
 debug.dlog = dlog
 
 debug.setLogPrefix = setLogPrefix
+debug.getLogPrefix = getLogPrefix
+
 debug.setFuncPrefix = setFuncPrefix
+debug.getFuncPrefix = getFuncPrefix
+
+debug.setDebugPrefix = setDebugPrefix
+debug.getDebugPrefix = getDebugPrefix
 
 --===== debug functions =====--
 dlog("set global debug functions")

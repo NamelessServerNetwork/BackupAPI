@@ -15,6 +15,44 @@ local orgRequire = require
 
 local function require(p)
 	debug.setFuncPrefix("[REQUIRE]")
+	
+	--[[
+	local function t()
+		debug.setFuncPrefix("[TEST]")
+		dlog("T")	
+		log("T")	
+	end
+	t()
+	local function t2()
+		debug.setFuncPrefix("[TEST2]", true, false)
+		dlog("T2")
+		log("T2")
+	end
+	t2()
+	local function t3()
+		debug.setFuncPrefix("[TEST3]", false, true)
+		dlog("T3")
+		log("T3")
+	end
+	t3()
+	local function t4()
+		debug.setFuncPrefix("[TEST4]", true, true)
+		dlog("T4")
+		log("T4")
+		
+		local function tt1()
+			log("tt1")
+			dlog("tt1")
+			debug.setFuncPrefix("[TT1]")
+			log("tt1")
+			dlog("tt1")
+		end
+		tt1()
+		
+	end
+	t4()
+	]]
+	
 	dlog(tostring(p))
 	return orgRequire(p)
 end
