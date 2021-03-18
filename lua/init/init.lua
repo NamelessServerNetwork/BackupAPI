@@ -7,9 +7,10 @@ main.devConf = loadfile("lua/devConf.lua")()
 main.args = loadfile("lua/init/parseArgs.lua")(main, args) --parse args
 
 --===== set debug =====--
-print(loadfile("lua/core/debug.lua"))
-main.debug = loadfile("lua/core/debug.lua")(main)
+--print(loadfile("lua/core/debug.lua"))
+main.debug = loadfile("lua/core/debug.lua")(main.devConf.devMode, "[INIT]")
 
+--debug.setLogPrefix("[INIT]")
 --===== set local init functions =====--
 local orgRequire = require
 
@@ -58,8 +59,6 @@ local function require(p)
 end
 
 --===== start initialisation =====--
-debug.setLogPrefix("[INIT]")
-
 print("--===== Starting DAMS " .. tostring(main.version) .. " =====--")
 log("Start initialization")
 
@@ -80,6 +79,7 @@ loadfile("lua/core/shutdown.lua")(main)
 loadfile("lua/init/test.lua")(main)
 
 
+log("Initialization done")
 
 os.exit(0)
 

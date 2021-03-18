@@ -1,4 +1,4 @@
-local global = ...
+local devMode, defaultPrefix = ...
 
 local orgDebug = _G.debug
 local debug = {
@@ -117,7 +117,7 @@ local function log(...)
 end
 
 local dlog
-if global.devConf.devMode then
+if devMode then
 	dlog = function(...)
 		setDebugPrefix("[DEBUG]")
 		log(...)
@@ -127,6 +127,7 @@ else
 end
 
 --===== debug function =====--
+setLogPrefix(defaultPrefix)
 dlog("set debug functions")
 
 debug.log = log
@@ -153,10 +154,8 @@ dlog("initialize debug environment")
 --=== set global metatables ===--
 dlog("set global debug metatables")
 
-_G.debug = setmetatable({}, {__index = function(t, i)
-	if debug[i] ~= nil then
-		return debug[i]
-	elseif orgDebug[i] ~= nil then
+_G.debug = setmetatable(debug, {__index = function(t, i)
+	if orgDebug[i] ~= nil then
 		return orgDebug[i]
 	else
 		return nil
