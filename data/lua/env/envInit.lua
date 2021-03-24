@@ -1,10 +1,10 @@
 --pre initializes the env for all threads
 
-local devMode, threadName = ...
+local devConf, threadName = ...
 local env = {}
 
 --=== set debug ===--
-env.debug = loadfile("data/lua/env/debug.lua")(devMode, tostring(threadName) .. "[PRE_INIT]")
+env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(threadName) .. "[ENV_INIT]")
 
 --=== set environment ===--
 dlog("Initialize the environment")

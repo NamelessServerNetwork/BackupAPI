@@ -1,0 +1,1 @@
+love.quit(0)

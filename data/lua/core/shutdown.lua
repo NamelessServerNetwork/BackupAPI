@@ -1,5 +1,3 @@
-local global = ...
-
 function love.quit()
 	print("SHUTTING DOWN")
 	

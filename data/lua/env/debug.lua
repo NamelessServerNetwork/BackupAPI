@@ -1,6 +1,6 @@
 --default debug env for all threads.
 
-local devMode, defaultPrefix = ...
+local devConf, defaultPrefix = ...
 
 local orgDebug = _G.debug
 local debug = {
@@ -9,6 +9,7 @@ local debug = {
 	internal = {
 		logPrefix = "",
 		debugPrefix = "",
+		internalPrefix = "",
 		functionPrefixes = {},
 	},
 	
@@ -87,6 +88,12 @@ local function setFuncPrefix(prefix, exclusive, noFullStack, stackLevel)
 		debug.internal.functionPrefixes[func] = nil
 	end
 end
+local function setInternalPrefix(prefix)
+	debug.internal.internalPrefix = prefix
+end
+local function getInternalPrefix(prefix)
+	return debug.internal.internalPrefix
+end
 
 local function getLogPrefix()
 	return tostring(debug.internal.logPrefix)
@@ -101,46 +108,61 @@ end
 
 local function clog(...) --clean log
 	local msgs = ""
-	local funcPrefix, exclusiveFuncPrefix = getFuncPrefix(3)
 	
-	if exclusiveFuncPrefix then
-		msgs = funcPrefix .. msgs
-	else
-		msgs = getLogPrefix() .. funcPrefix .. msgs
-	end	
-	msgs = msgs .. ": "
 	for _, msg in pairs({...}) do
-		msgs = msgs .. tostring(msg) .. "     "
+		msgs = msgs .. tostring(msg) .. "  "
 	end
 	
-	print("[" .. os.date("%X") .. "]" .. getDebugPrefix() .. msgs)
+	print("[" .. os.date("%X") .. "]" .. getInternalPrefix() .. msgs)
+	setInternalPrefix("")
+end
+local function plog(...)
+	local prefix = ""
+	local funcPrefix, allowLogPrefix = getFuncPrefix(3)
+	
+	if allowLogPrefix then
+		prefix = funcPrefix .. prefix
+	else
+		prefix = getLogPrefix() .. funcPrefix .. prefix
+	end	
+	prefix = prefix .. ":"
+	
+	setInternalPrefix(getDebugPrefix() .. prefix .. " ")
+	clog(...)
+	
 	setDebugPrefix("")
 end
 local function log(...)
 	setDebugPrefix("[INFO]")
-	clog(...)
+	plog(...)
 end
 local function warn(...)
 	setDebugPrefix("[WARN]")
-	clog(...)
+	plog(...)
 end
 local function err(...)
 	setDebugPrefix("[ERROR]")
-	clog(...)
+	plog(...)
 end
 local function fatal(...)
 	setDebugPrefix("[FATAL]")
-	clog(...)
-	--ToDo: force quitting program.
+	plog(...)
+	love.exit(1, ...)
 end
-local dlog
-if devMode then
+
+local dlog = function() end
+if devConf.devMode and devConf.debug.debugLog then
 	dlog = function(...)
 		setDebugPrefix("[DEBUG]")
-		clog(...)
+		plog(...)
 	end
-else
-	dlog = function() end
+end
+local ldlog = function() end
+if devConf.devMode and devConf.debug.lowDebugLog then
+	ldlog = function(...)
+		setDebugPrefix("[LOW_DEBUG]")
+		plog(...)
+	end
 end
 
 --===== set debug function =====--
@@ -148,8 +170,10 @@ setLogPrefix(defaultPrefix)
 dlog("set debug functions")
 
 debug.clog = clog
+debug.plog = plog
 debug.log = log
 debug.dlog = dlog
+debug.ldlog = ldlog
 debug.warn = warn
 debug.err = err
 debug.fatal = fatal
@@ -167,8 +191,10 @@ debug.getDebugPrefix = getDebugPrefix
 dlog("set global debug functions")
 
 debug.global.clog = clog
+debug.global.plog = plog
 debug.global.log = log
 debug.global.dlog = dlog
+debug.global.ldlog = ldlog
 debug.global.warn = warn
 debug.global.err = err
 debug.global.fatal = fatal

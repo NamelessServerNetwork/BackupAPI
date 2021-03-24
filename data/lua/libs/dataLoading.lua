@@ -9,6 +9,8 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 	local print = logFuncs.log or dlog
 	local warn = logFuncs.warn or warn
 	local onError = logFuncs.error or err
+	local loadedFiles = 0
+	local failedFiles = 0
 	
 	subDirs = env.ut.parseArgs(subDirs, true)
 	
@@ -22,19 +24,23 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 				if structured then
 					if target[string.sub(file, 0, #file)] == nil or overwrite then
 						target[string.sub(file, 0, #file)] = {}
-						loadData(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured)
+						local s, f = loadData(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured)
+						loadedFiles = loadedFiles + s
+						failedFiles = failedFiles + f
 					else
 						onError("[DLF]: Target already existing!: " .. file .. " :" .. tostring(target))
 					end
 				else
-					loadData(target, path .. file, logFuncs, overwrite, subDirs, structured)
+					local s, f = loadData(target, path .. file, logFuncs, overwrite, subDirs, structured)
+					loadedFiles = loadedFiles + s
+					failedFiles = failedFiles + f
 				end
 			elseif target[name] == nil or overwrite then
 				local debugString = ""
 				if target[name] == nil then
-					debugString = "[DLF]: Loading file: " .. dir .. "/" .. file .. ": "
+					debugString = "Loading file: " .. dir .. "/" .. file .. ": "
 				else
-					debugString = "[DLF]: Reloading file: " .. dir .. "/" .. file .. ": "
+					debugString = "Reloading file: " .. dir .. "/" .. file .. ": "
 				end
 				
 				local suc, err 
@@ -44,26 +50,44 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 					suc, err = loadfile(path .. file)
 				end
 				
+				target[name or string.sub(p, 0, #p -1)] = suc
+				
+				--[[
 				if type(suc) == "function" then print("T1")
 					target[name or string.sub(p, 0, #p -1)] = suc(env)
 				elseif type(suc) == "table" then
 					target[name or string.sub(p, 0, #p -1)] = suc
 				end
+				]]
 				
-				if env.isDev then
-					if suc == nil then
-						warn("[DLF] Failed to load file: " .. dir .. "/" .. file .. ": " .. tostring(err))
-					else
-						print(debugString .. tostring(suc))
-					end
+				if suc == nil then 
+					failedFiles = failedFiles +1
+					warn("Failed to load file: " .. dir .. "/" .. file .. ": " .. tostring(err))
+				else
+					loadedFiles = loadedFiles +1
+					dlog(debugString .. tostring(suc))
 				end
 			end
 		end
+	end
+	return loadedFiles, failedFiles
+end
+
+local function load(target, dir, name)
+	local loadedFiles, failedFiles = 0, 0
+	if name == nil then name = dir end 
+	
+	dlog("Loading " .. name)
+	loadedFiles, failedFiles = loadData(target, dir)
+	log("Successfully loaded " .. tostring(loadedFiles) .. " " .. name)
+	if failedFiles > 0 then
+		warn("Failed to load " .. tostring(failedFiles) .. " " .. name)
 	end
 end
 
 --===== set functions =====--
 DL.loadData = loadData
+DL.load = load
 
 
 return DL
