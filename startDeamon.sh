@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./bin/love ./lua $@
+./data/bin/love ./data $@

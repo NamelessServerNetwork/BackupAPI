@@ -1,0 +1,5 @@
+loadfile:
+	uses "data/" as default path after init
+
+_G:
+	"lua/core/debug.lua" is the only script that is allowed to change _G metatables
