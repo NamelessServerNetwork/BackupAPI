@@ -19,12 +19,6 @@ dlog("Initialize main env")
 env = loadfile("lua/core/main.lua")()
 env.devConf = devConf
 
-dlog("Setting up require paths")
-package.path = package.path .. ";" .. devConf.requirePath
-package.path = package.path .. ";" .. devConf.cRequirePath
-ldlog("New lua require paths: " .. package.path)
-ldlog("New C require paths: " .. package.cpath)
-
 dlog("Loading libs")
 env.fs = require("love.filesystem")
 

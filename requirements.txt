@@ -1,1 +1,9 @@
-LÖVE 2D v11.x
+interpreter:
+	LÖVE 2D v11.x
+
+luarocks:
+	lsqlite3complete
+
+clibs:
+	getch:
+		https://github.com/max1220/lua-getch

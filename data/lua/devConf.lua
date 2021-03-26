@@ -1,11 +1,18 @@
 local devConf = {
-	requirePath = "data/lua/libs/?.lua;data/lua/libs/thirdParty/?.lua;/usr/local/lib/lua/5.1/?.so",
-	cRequirePath = "",
+	requirePath = "data/lua/libs/?.lua;data/lua/libs/thirdParty/?.lua",
+	cRequirePath = "data/bin/libs/?.so",
 	
 	devMode = true,
 	
-	terminalCommands = {
-		forceMainTerminal = "_MT",
+	terminal = {
+		commands = {
+			forceMainTerminal = "_MT",
+		},
+		keys = { --char codes for specific functions
+			enter = 10,
+			autoComp = 9,
+			
+		},
 	},
 	
 	debug = {

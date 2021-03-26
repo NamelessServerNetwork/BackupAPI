@@ -1,7 +1,10 @@
 --DAMS main file
 local env, shared = ...
 
+local getch = require("getch")
+
 terminal = {
+	input = "",
 	currentTerminal = nil,
 	currentTerminalPrefix = "",
 }
@@ -14,11 +17,16 @@ end
 function love.update()
 	local command, args = "", {}
 	local callMainTerminal = false
-	local input = tostring(io.read())
+	--local input = tostring(io.read())
+	local input = getch.blocking()
+	
+	print(input)
+	
+	do return 0 end
 	
 	for c in string.gmatch(input, "[^ ]+") do
 		if command == "" then
-			if c == env.devConf.terminalCommands.forceMainTerminal then
+			if c == env.devConf.terminal.commands.forceMainTerminal then
 				callMainTerminal = true
 			else
 				command = c
@@ -31,7 +39,7 @@ function love.update()
 	if terminal.currentTerminal ~= nil and not callMainTerminal then
 		debug.setFuncPrefix(terminal.currentTerminalPrefix, true, true)
 	else
-		debug.setFuncPrefix("[TERMINAL]", true, true)
+		debug.setFuncPrefix("[MAIN_TERMINAL]", true, true)
 	end
 	
 	plog("> " .. tostring(input))

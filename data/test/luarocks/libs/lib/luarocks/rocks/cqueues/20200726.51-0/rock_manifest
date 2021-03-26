@@ -9,7 +9,7 @@ rock_manifest = {
       ['cqueues.tex'] = "ebf268592d278452f5551e4be997afd0"
    },
    lib = {
-      ['_cqueues.so'] = "bdf3d6ddefcb803342de89f9ad400e70"
+      ['_cqueues.so'] = "76da2a4354f78f184e2f1b260684ac30"
    },
    lua = {
       cqueues = {
