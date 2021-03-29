@@ -28,7 +28,7 @@ env.dl = loadfile("lua/libs/dataLoading.lua")(env)
 
 --=== load core files ===--
 dlog("Loading core files")
-loadfile("lua/core/terminal.lua")(env)
+loadfile(env.devConf.terminalPath .. "terminalManager.lua")(env)
 loadfile("lua/core/shutdown.lua")(env)
 
 loadfile("lua/init/test.lua")(env)

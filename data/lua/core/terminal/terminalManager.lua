@@ -3,10 +3,12 @@ local env, shared = ...
 
 local getch = require("getch")
 
-terminal = {
+local terminal = {
 	input = "",
 	currentTerminal = nil,
 	currentTerminalPrefix = "",
+	
+	terminal = loadfile(env.devConf.terminalPath .. "terminal.lua")(env),
 }
 
 function terminal.setTerminal(t, prefix)
@@ -14,15 +16,9 @@ function terminal.setTerminal(t, prefix)
 	terminal.currentTerminalPrefix = prefix
 end
 
-function love.update()
+function terminal.input(input) 
 	local command, args = "", {}
 	local callMainTerminal = false
-	--local input = tostring(io.read())
-	local input = getch.blocking()
-	
-	print(input)
-	
-	do return 0 end
 	
 	for c in string.gmatch(input, "[^ ]+") do
 		if command == "" then
@@ -53,6 +49,17 @@ function love.update()
 	else
 		plog("Command \"" .. command .. "\" not found")
 	end
+end
+
+function terminal.autoComp(t)
+	print(t)
+end
+
+function love.update()
+	--local input = tostring(io.read())
+	--local input = getch.blocking()
+	terminal.terminal.update()
+	terminal.terminal.draw()
 end
 
 env.terminal = terminal

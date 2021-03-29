@@ -3,7 +3,10 @@ interpreter:
 
 luarocks:
 	lsqlite3complete
-
+	
 clibs:
 	getch:
 		https://github.com/max1220/lua-getch
+
+OS:
+	tput

@@ -1,6 +1,7 @@
 local devConf = {
 	requirePath = "data/lua/libs/?.lua;data/lua/libs/thirdParty/?.lua",
 	cRequirePath = "data/bin/libs/?.so",
+	terminalPath = "lua/core/terminal/",
 	
 	devMode = true,
 	
