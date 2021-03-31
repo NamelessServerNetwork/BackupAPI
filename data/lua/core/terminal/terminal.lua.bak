@@ -22,7 +22,7 @@ local previusTerminalSizeRefreshTime = 0
 
 local textBox = textInput.new()
 
-local debug_print = thread.getChannel("debug_print")
+local debug_write = thread.getChannel("debug_write")
 
 --===== set local functions =====--
 --local ioWrite = io.write
@@ -64,7 +64,7 @@ local function getMsg(...)
 	return msgs
 end
 
-local function write(...) --not used anymore! --io.write() replacement
+local function write(...) --io.write() replacement
 	local _, terminalHeight = getTerminalSize()
 	
 	w(ansi.setCursor:format(terminalHeight -1, writeCursorPos))
@@ -79,12 +79,12 @@ end
 
 local function print(...)
 	local _, terminalHeight = getTerminalSize()
-	w(ansi.setCursor:format(terminalHeight, writeCursorPos))
-	w(ansi.clearLine)
+	w(ansi.setCursor:format(terminalHeight -1, writeCursorPos))
 	w(getMsg(...))
-	w("\n")
-	writeCursorPos = 1 --used for write() / io.write()
+	writeCursorPos = 1
 	resetCursor()
+	w(ansi.clearLine)
+	w("\n")
 end
 
 local function get_mbs(callback, keyTable, max_i, i)
@@ -136,8 +136,12 @@ function terminal.update()
 		textBox:update(terminalLength, code, action)
 	end
 	
-	while debug_print:peek() ~= nil and true do
-		print(debug_print:pop())
+	--w("\n")
+	write("\n")
+	
+	while debug_write:peek() ~= nil and true do
+		
+		write(debug_write:pop())
 	end
 end
 
@@ -148,9 +152,9 @@ function terminal.draw()
 end
 
 terminal.print = print
---terminal.write = write
+terminal.write = write
 
 _G.print = print
---_G.io.write = write
+_G.io.write = write
 
 return terminal

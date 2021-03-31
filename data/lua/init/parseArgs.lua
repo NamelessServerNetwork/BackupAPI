@@ -4,7 +4,7 @@ local parser = require("lua.libs.thirdParty.argparse")("DAMS")
 
 
 parser:flag("-v --version", "prints DAMS version"):target("version")
-parser:flag("-D --dev", "forces dev mode"):target("devMode")
+--parser:flag("-D --dev", "forces dev mode"):target("devMode")
 
 
 

@@ -167,7 +167,7 @@ end
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)
-dlog("set debug functions")
+--dlog("set debug functions")
 
 debug.clog = clog
 debug.plog = plog
@@ -188,7 +188,7 @@ debug.setDebugPrefix = setDebugPrefix
 debug.getDebugPrefix = getDebugPrefix
 
 --===== set global debug functions =====--
-dlog("set global debug functions")
+--dlog("set global debug functions")
 
 debug.global.clog = clog
 debug.global.plog = plog
@@ -200,10 +200,10 @@ debug.global.err = err
 debug.global.fatal = fatal
 
 --===== initialize =====--
-dlog("initialize debug environment")
+--dlog("initialize debug environment")
 
 --=== set global metatables ===--
-dlog("set global debug metatables")
+--dlog("set global debug metatables")
 
 _G.debug = setmetatable(orgDebug, {__index = function(t, i)
 	if debug[i] ~= nil then
