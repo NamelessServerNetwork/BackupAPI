@@ -73,12 +73,12 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 	return loadedFiles, failedFiles
 end
 
-local function load(target, dir, name)
+local function load(target, dir, name, sturctured, overwrite)
 	local loadedFiles, failedFiles = 0, 0
 	if name == nil then name = dir end 
 	
 	dlog("Loading " .. name)
-	loadedFiles, failedFiles = loadData(target, dir)
+	loadedFiles, failedFiles = loadData(target, dir, nil, overwrite, nil, sturctured)
 	log("Successfully loaded " .. tostring(loadedFiles) .. " " .. name)
 	if failedFiles > 0 then
 		warn("Failed to load " .. tostring(failedFiles) .. " " .. name)
@@ -86,7 +86,7 @@ local function load(target, dir, name)
 end
 
 --===== set functions =====--
-DL.loadData = loadData
+--DL.loadData = loadData
 DL.load = load
 
 

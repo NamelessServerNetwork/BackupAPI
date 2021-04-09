@@ -127,7 +127,7 @@ local function textInput(text)
   
   if text == "exit" or text == "quit" then
 	plog("Exitting LUA terminal")
-	env.terminal.setTerminal()
+	env.env.terminal.setTerminal()
 	return 0
   end
   

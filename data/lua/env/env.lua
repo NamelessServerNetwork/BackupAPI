@@ -11,24 +11,10 @@ env.org = {
 	},
 }
 
-env.debug.internal.ioWriteBuffer = ""
-
 local orgRequire = require
-local function require(p)
-	debug.setFuncPrefix("[REQUIRE]")
-	ldlog(tostring(p))
-	return orgRequire(p)
-end
-
 local orgLoadfile = loadfile
-local function loadfile(p)
-	debug.setFuncPrefix("[LOADFILE]")
-	ldlog(tostring(p))
-	return orgLoadfile("data/" .. p)
-end
 
-_G.require = require
-_G.loadfile = loadfile
+env.debug.internal.ioWriteBuffer = ""
 
 if not mainThread then
 	local thread = orgRequire("love.thread")
@@ -51,3 +37,23 @@ if not mainThread then
 		env.debug.internal.ioWriteBuffer = ""
 	end
 end
+
+local function require(p)
+	debug.setFuncPrefix("[REQUIRE]")
+	ldlog(tostring(p))
+	return orgRequire(p)
+end
+
+local function loadfile(p)
+	local func, err
+	debug.setFuncPrefix("[LOADFILE]")
+	ldlog(tostring(p))
+	func, err = orgLoadfile("data/" .. p)
+	if func == nil then
+		debug.err(func, err)
+	end
+	return func, err
+end
+
+_G.require = require
+_G.loadfile = loadfile

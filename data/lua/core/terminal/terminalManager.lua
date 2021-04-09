@@ -13,7 +13,7 @@ local terminal = {
 
 function terminal.setTerminal(t, prefix)
 	terminal.currentTerminal = t
-	terminal.currentTerminalPrefix = prefix
+	terminal.currentTerminalPrefix = prefix or ""
 end
 
 function terminal.input(input) 
@@ -41,7 +41,7 @@ function terminal.input(input)
 	plog("> " .. tostring(input))
 	
 	if terminal.currentTerminal ~= nil and not callMainTerminal then
-		terminal.currentTerminal.update(input, command, args)
+		terminal.currentTerminal.input(input, command, args)
 	elseif env.commands[command] ~= nil then
 		local suc, err = xpcall(env.commands[command], debug.traceback, env, args)
 		
@@ -51,8 +51,10 @@ function terminal.input(input)
 	end
 end
 
-function terminal.autoComp(t)
-	print(t)
+function terminal.autoComp(ti)
+	if terminal.currentTerminal ~= nil and terminal.currentTerminal.autoComp ~= nil then
+		terminal.currentTerminal.autoComp(ti.text, ti)
+	end
 end
 
 function love.update()

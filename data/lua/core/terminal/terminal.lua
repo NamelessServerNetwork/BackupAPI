@@ -92,6 +92,7 @@ local function get_mbs(callback, keyTable, max_i, i)
 	i = tonumber(i) or 1
 	max_i = tonumber(max_i) or 10
 	local key_code = callback(env.devConf.sleepTime)
+	--print(key_code)
 	if i>max_i then
 		return key_code, false
 	end
@@ -133,7 +134,13 @@ function terminal.update()
 	local code, action = get_mbs(getch.non_blocking, keyTable)
 	
 	if code ~= nil then
-		textBox:update(terminalLength, code, action)
+		--print(code, action)
+		
+		if action == "RELOAD" then
+			loadfile("lua/core/reload.lua")(env, shared)
+		else
+			textBox:update(terminalLength, code, action)
+		end
 	end
 	
 	while debug_print:peek() ~= nil and true do

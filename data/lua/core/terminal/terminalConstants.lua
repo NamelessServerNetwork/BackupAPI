@@ -13,6 +13,9 @@ constants.keyTable = {
 			[68] = "left",
 			[49] = {
 				[126] = "pos1",
+				[53] = {
+					[126] = "RELOAD",
+				},
 			},
 			[52] = {
 				[126] = "end",
@@ -30,7 +33,7 @@ constants.keyTable = {
 				[126] = "pagedown"
 			}
 		}
-	}
+	},
 }
 
 constants.ansi = {
