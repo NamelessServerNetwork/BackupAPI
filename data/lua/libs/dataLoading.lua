@@ -1,13 +1,10 @@
 local env, shared = ...
 
 local DL = {}
+local pa = env.ut.parseArgs
 
 --===== lib functions =====--
-local function executeFile(file)
-
-end
-
-local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, numericStructured, loadFunc)
+local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, priorityOrder, loadFunc, executeFiles)
 	local path = dir .. "/" --= env.shell.getWorkingDirectory() .. "/" .. dir .. "/"
 	logFuncs = logFuncs or {}
 	local print = logFuncs.log or dlog
@@ -28,14 +25,14 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, nu
 				if structured then
 					if target[string.sub(file, 0, #file)] == nil or overwrite then
 						target[string.sub(file, 0, #file)] = {}
-						local s, f = loadDir(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured)
+						local s, f = loadDir(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured, priorityOrder, loadFunc, executeFiles)
 						loadedFiles = loadedFiles + s
 						failedFiles = failedFiles + f
 					else
 						onError("[DLF]: Target already existing!: " .. file .. " :" .. tostring(target))
 					end
 				else
-					local s, f = loadDir(target, path .. file, logFuncs, overwrite, subDirs, structured)
+					local s, f = loadDir(target, path .. file, logFuncs, overwrite, subDirs, structured, priorityOrder, loadFunc, executeFiles)
 					loadedFiles = loadedFiles + s
 					failedFiles = failedFiles + f
 				end
@@ -55,7 +52,7 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, nu
 				end
 				
 				--target[name or string.sub(p, 0, #p -1)] = suc
-				if numericStructured then
+				if priorityOrder then
 					local order = 50
 					for fileOrder in string.gmatch(name, "([^_]+)") do
 						order = tonumber(fileOrder)
@@ -70,22 +67,19 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, nu
 					target[order][name] = suc
 				else
 					target[name] = suc
+					if executeFiles then
+						if type(suc) == "function" then
+							target[name] = suc(env)
+						end
+					end
 				end
-				
-				--[[
-				if type(suc) == "function" then print("T1")
-					target[name or string.sub(p, 0, #p -1)] = suc(env)
-				elseif type(suc) == "table" then
-					target[name or string.sub(p, 0, #p -1)] = suc
-				end
-				]]
 				
 				if suc == nil then 
 					failedFiles = failedFiles +1
 					warn("Failed to load file: " .. dir .. "/" .. file .. ": " .. tostring(err))
 				else
 					loadedFiles = loadedFiles +1
-					dlog(debugString .. tostring(suc))
+					ldlog(debugString .. tostring(suc))
 				end
 			end
 		end
@@ -93,12 +87,20 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, nu
 	return loadedFiles, failedFiles
 end
 
-local function load(target, dir, name, sturctured, numericStructured, overwrite)
+local function load(args)
+	local target = pa(args.t, args.target, {})
+	local dir = pa(args.d, args.dir)
+	local name = pa(args.n, args.name, args.dir)
+	local structured = pa(args.s, args.structured)
+	local priorityOrder = pa(args.po, args.priorityOrder)
+	local overwrite = pa(args.o, args.overwrite)
+	local loadFunc = pa(args.lf, args.loadFunc)
+	local executeFiles = pa(args.e, args.execute, args.executeFiles, args.executeDir)
+
 	local loadedFiles, failedFiles = 0, 0
-	if name == nil then name = dir end 
 	
 	dlog("Loading: " .. name .. " (" .. dir .. ")")
-	loadedFiles, failedFiles = loadDir(target, dir, nil, overwrite, nil, sturctured, numericStructured)
+	loadedFiles, failedFiles = loadDir(target, dir, nil, overwrite, nil, structured, priorityOrder, loadFunc, executeFiles)
 	log("Successfully loaded " .. tostring(loadedFiles) .. " " .. name)
 	if failedFiles > 0 then
 		warn("Failed to load " .. tostring(failedFiles) .. " " .. name)
@@ -108,18 +110,39 @@ local function load(target, dir, name, sturctured, numericStructured, overwrite)
 end
 
 local function executeDir(dir, name)
+	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
 	name = name or ""
+	local scripts = load({
+		target = {}, 
+		dir = dir, 
+		name = name, 
+		priorityOrder = true,
+	})
+	
+	local executedFiles, failedFiles = 0, 0
+	
 	dlog("Execute: " .. name .. " (" .. dir .. ")")
-	local scripts = load({}, dir, name, false, true)
 	
 	for order = 0, 100 do
 		local scripts = scripts[order]
 		if scripts ~= nil then
-			for name, script in pairs(scripts) do
-				dlog("Execute: " .. name)
-				script()
+			for name, func in pairs(scripts) do
+				ldlog("Execute: " .. name)
+				local suc, err = xpcall(func, debug.traceback)
+				
+				if suc == false then
+					warn("Failed to execute: " .. name)
+					warn(err)
+					failedFiles = failedFiles +1
+				else
+					executedFiles = executedFiles +1
+				end
 			end
 		end
+	end
+	log("Successfully executed: " .. tostring(executedFiles) .. " " .. name)
+	if failedFiles > 0 then
+		warn("Failed to executed: " .. tostring(failedFiles) .. " " .. name)
 	end
 	dlog("Executing done: " .. name .. " (" .. dir .. ")")
 end

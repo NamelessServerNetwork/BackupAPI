@@ -41,7 +41,13 @@ ldlog("New C require paths: " .. package.cpath)
 
 
 dlog("Load dynamic env data")
-env.dl.load(env, "lua/env/dynData", "dynData", true)
+env.dl.load({
+	target = env, 
+	dir = "lua/env/dynData", 
+	name = "dynData", 
+	structured = true,
+	execute = true,
+})
 
 
 return env, shared

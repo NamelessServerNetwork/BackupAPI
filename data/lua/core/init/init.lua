@@ -24,7 +24,11 @@ loadfile(env.devConf.terminalPath .. "terminalManager.lua")(env)
 loadfile("lua/core/shutdown.lua")(env)
 
 --=== load dynamic data ===--
-env.dl.load(env.commands, "commands", "commands")
+env.dl.load({
+	target = env.commands, 
+	dir = "commands", 
+	name = "commands",
+})
 
 log("Initialization done")
 

@@ -20,10 +20,6 @@ stt2:start()
 sct:start()
 ]]
 
-env.dl = loadfile("lua/libs/dataLoading.lua")(env, shared)
-
-local files = env.dl.executeDir("lua/core/onReload", "reload scripts")
-
 
 
 print("--===== TEST1 END =====--")
