@@ -3,7 +3,11 @@ local env, shared = ...
 local DL = {}
 
 --===== lib functions =====--
-function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFunc)
+local function executeFile(file)
+
+end
+
+local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, numericStructured, loadFunc)
 	local path = dir .. "/" --= env.shell.getWorkingDirectory() .. "/" .. dir .. "/"
 	logFuncs = logFuncs or {}
 	local print = logFuncs.log or dlog
@@ -24,14 +28,14 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 				if structured then
 					if target[string.sub(file, 0, #file)] == nil or overwrite then
 						target[string.sub(file, 0, #file)] = {}
-						local s, f = loadData(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured)
+						local s, f = loadDir(target[string.sub(file, 0, #file)], dir .. "/" .. file, logFuncs, overwrite, subDirs, structured)
 						loadedFiles = loadedFiles + s
 						failedFiles = failedFiles + f
 					else
 						onError("[DLF]: Target already existing!: " .. file .. " :" .. tostring(target))
 					end
 				else
-					local s, f = loadData(target, path .. file, logFuncs, overwrite, subDirs, structured)
+					local s, f = loadDir(target, path .. file, logFuncs, overwrite, subDirs, structured)
 					loadedFiles = loadedFiles + s
 					failedFiles = failedFiles + f
 				end
@@ -50,7 +54,23 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 					suc, err = loadfile(path .. file)
 				end
 				
-				target[name or string.sub(p, 0, #p -1)] = suc
+				--target[name or string.sub(p, 0, #p -1)] = suc
+				if numericStructured then
+					local order = 50
+					for fileOrder in string.gmatch(name, "([^_]+)") do
+						order = tonumber(fileOrder)
+						break
+					end
+					if order == nil then
+						order = 50
+					end
+					if target[order] == nil then
+						target[order] = {}
+					end
+					target[order][name] = suc
+				else
+					target[name] = suc
+				end
 				
 				--[[
 				if type(suc) == "function" then print("T1")
@@ -73,21 +93,40 @@ function loadData(target, dir, logFuncs, overwrite, subDirs, structured, loadFun
 	return loadedFiles, failedFiles
 end
 
-local function load(target, dir, name, sturctured, overwrite)
+local function load(target, dir, name, sturctured, numericStructured, overwrite)
 	local loadedFiles, failedFiles = 0, 0
 	if name == nil then name = dir end 
 	
-	dlog("Loading " .. name)
-	loadedFiles, failedFiles = loadData(target, dir, nil, overwrite, nil, sturctured)
+	dlog("Loading: " .. name .. " (" .. dir .. ")")
+	loadedFiles, failedFiles = loadDir(target, dir, nil, overwrite, nil, sturctured, numericStructured)
 	log("Successfully loaded " .. tostring(loadedFiles) .. " " .. name)
 	if failedFiles > 0 then
 		warn("Failed to load " .. tostring(failedFiles) .. " " .. name)
 	end
+	dlog("Loading done: " .. name .. " (" .. dir .. ")")
+	return target
+end
+
+local function executeDir(dir, name)
+	name = name or ""
+	dlog("Execute: " .. name .. " (" .. dir .. ")")
+	local scripts = load({}, dir, name, false, true)
+	
+	for order = 0, 100 do
+		local scripts = scripts[order]
+		if scripts ~= nil then
+			for name, script in pairs(scripts) do
+				dlog("Execute: " .. name)
+				script()
+			end
+		end
+	end
+	dlog("Executing done: " .. name .. " (" .. dir .. ")")
 end
 
 --===== set functions =====--
 --DL.loadData = loadData
 DL.load = load
-
+DL.executeDir = executeDir
 
 return DL

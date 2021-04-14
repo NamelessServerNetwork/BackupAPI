@@ -20,7 +20,7 @@ local devConf = {
 	
 	debug = {
 		debugLog = true,
-		lowDebugLog = true,
+		lowDebugLog = false,
 	},
 }
 

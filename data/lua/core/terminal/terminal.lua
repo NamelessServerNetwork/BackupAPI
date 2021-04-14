@@ -131,7 +131,7 @@ end
 
 --===== main functions =====--
 function terminal.update()
-	local code, action = get_mbs(getch.non_blocking, keyTable)
+	local code, action = get_mbs(getch.blocking, keyTable)
 	
 	if code ~= nil then
 		--print(code, action)
