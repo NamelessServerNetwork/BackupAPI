@@ -69,7 +69,14 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 					target[name] = suc
 					if executeFiles then
 						if type(suc) == "function" then
-							target[name] = suc(env)
+							local suc, err = xpcall(suc, debug.traceback, env, shared)
+							if suc == false then
+								warn("Failed to execute: " .. name)
+								warn(err)
+							else
+								target[name] = suc
+							end
+							
 						end
 					end
 				end
@@ -128,7 +135,7 @@ local function executeDir(dir, name)
 		if scripts ~= nil then
 			for name, func in pairs(scripts) do
 				ldlog("Execute: " .. name)
-				local suc, err = xpcall(func, debug.traceback)
+				local suc, err = xpcall(func, debug.traceback, env, shared)
 				
 				if suc == false then
 					warn("Failed to execute: " .. name)

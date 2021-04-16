@@ -7,6 +7,9 @@ local env = {}
 local devConf = loadfile("data/lua/devConf.lua")()
 env.devConf = devConf
 
+package.path = package.path .. ";" .. devConf.requirePath
+package.cpath = package.cpath .. ";" .. devConf.cRequirePath
+
 --=== set debug ===--
 env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(threadName) .. "[ENV_INIT]")
 
@@ -20,7 +23,8 @@ loadfile("data/lua/env/env.lua")(env, mainThread)
 
 dlog("Loading libs")
 env.fs = require("love.filesystem")
-env.ut = require("lua.libs.UT")
+env.thread = require("love.thread")
+env.ut = require("UT")
 
 env.dl = loadfile("lua/libs/dataLoading.lua")(env)
 
@@ -32,13 +36,6 @@ env.shared = shared
 dlog("Initialize the environment")
 
 debug.setLogPrefix(tostring(threadName))
-
-dlog("Setting up require paths")
-package.path = package.path .. ";" .. devConf.requirePath
-package.cpath = package.cpath .. ";" .. devConf.cRequirePath
-ldlog("New lua require paths: " .. package.path)
-ldlog("New C require paths: " .. package.cpath)
-
 
 dlog("Load dynamic env data")
 env.dl.load({

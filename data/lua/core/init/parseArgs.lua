@@ -1,5 +1,5 @@
 local args, version = ...
-local parser = require("lua.libs.thirdParty.argparse")("DAMS")
+local parser = require("data.lua.libs.thirdParty.argparse")("DAMS")
 
 
 

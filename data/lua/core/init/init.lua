@@ -13,10 +13,12 @@ log("Start initialization")
 debug.setFuncPrefix("[INIT]")
 
 dlog("Initialize main env")
-local mainTable = loadfile("lua/core/main.lua")()
+local mainTable = loadfile("lua/core/mainTable.lua")()
 for i, c in pairs(mainTable) do
 	env[i] = c
 end
+env.version = version
+env.args = args
 
 --=== load core files ===--
 dlog("Loading core files")
