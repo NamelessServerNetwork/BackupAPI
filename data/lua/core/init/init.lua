@@ -38,4 +38,4 @@ log("Initialization done")
 
 loadfile("lua/core/init/test.lua")(env)
 
-return true, 0
+return true, env, shared

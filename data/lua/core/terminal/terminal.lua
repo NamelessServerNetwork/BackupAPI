@@ -19,6 +19,7 @@ local keyTable = constants.keyTable
 local writeCursorPos = 1
 local terminalLength, terminalHeight = 115, 70
 local previusTerminalSizeRefreshTime = 0
+local drawNeeded = true
 
 local textBox = textInput.new()
 
@@ -131,7 +132,7 @@ end
 
 --===== main functions =====--
 function terminal.update()
-	local code, action = get_mbs(getch.blocking, keyTable)
+	local code, action = get_mbs(getch.non_blocking, keyTable)
 	
 	if code ~= nil then
 		--print(code, action)
@@ -141,17 +142,23 @@ function terminal.update()
 		else
 			textBox:update(terminalLength, code, action)
 		end
+		drawNeeded = true
 	end
 	
 	while debug_print:peek() ~= nil and true do
 		print(debug_print:pop())
+		drawNeeded = true
 	end
 end
 
 function terminal.draw()
+	if not drawNeeded then return false end
+	
 	local terminalLength = getTerminalSize()
 	
 	draw(textBox:get(terminalLength))
+	
+	drawNeeded = false
 end
 
 terminal.print = print

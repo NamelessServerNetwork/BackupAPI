@@ -1,5 +1,5 @@
 --LÖVE main file 
-local version = "v0.0.11"
+local version = "v0.0.12"
 
 function love.load(args)
 	print("--===== Starting DAMS " .. tostring(version) .. " =====--")

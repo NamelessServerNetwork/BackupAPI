@@ -18,6 +18,10 @@ local devConf = {
 		},
 	},
 	
+	onReload = {
+		core = true,
+	},
+	
 	debug = {
 		debugLog = true,
 		lowDebugLog = false,

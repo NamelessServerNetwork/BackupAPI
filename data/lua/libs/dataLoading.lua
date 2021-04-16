@@ -69,12 +69,12 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 					target[name] = suc
 					if executeFiles then
 						if type(suc) == "function" then
-							local suc, err = xpcall(suc, debug.traceback, env, shared)
+							local suc, returnValue = xpcall(suc, debug.traceback, env, shared)
 							if suc == false then
 								warn("Failed to execute: " .. name)
-								warn(err)
+								warn(returnValue)
 							else
-								target[name] = suc
+								target[name] = returnValue
 							end
 							
 						end
@@ -103,7 +103,7 @@ local function load(args)
 	local overwrite = pa(args.o, args.overwrite)
 	local loadFunc = pa(args.lf, args.loadFunc)
 	local executeFiles = pa(args.e, args.execute, args.executeFiles, args.executeDir)
-
+	
 	local loadedFiles, failedFiles = 0, 0
 	
 	dlog("Loading: " .. name .. " (" .. dir .. ")")
@@ -154,9 +154,15 @@ local function executeDir(dir, name)
 	dlog("Executing done: " .. name .. " (" .. dir .. ")")
 end
 
+local function setEnv(newEnv, newShared)
+	env = newEnv
+	shared = newShared
+end
+
 --===== set functions =====--
 --DL.loadData = loadData
 DL.load = load
 DL.executeDir = executeDir
+DL.setEnv = setEnv
 
 return DL
