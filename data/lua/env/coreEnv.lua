@@ -1,5 +1,5 @@
 --default env for all threads.
-local env, mainThread = ...
+local env = ...
 
 env.org = {
 	require = require,
@@ -16,14 +16,16 @@ local orgLoadfile = loadfile
 
 env.debug.internal.ioWriteBuffer = ""
 
-if not mainThread then
+if not env.mainThread then
 	local thread = orgRequire("love.thread")
 	local debug_print = thread.getChannel("debug_print")
 	
 	_G.print = function(...)
+		local msgs = ""
 		for _, msg in pairs({...}) do
-			debug_print:push(msg)
+			msgs = msgs .. tostring(msg) .. "\t"
 		end
+		debug_print:push(msgs)
 	end
 	
 	_G.io.write = function(...)

@@ -34,8 +34,4 @@ env.dl.load({
 
 log("Initialization done")
 
---os.exit(0)
-
-loadfile("lua/core/init/test.lua")(env)
-
 return true, env, shared

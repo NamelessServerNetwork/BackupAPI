@@ -2,7 +2,7 @@ local env, shared = ...
 
 return function(dir, name)
 	local suc, file = pcall(io.open, "data/" .. dir, "r")
-	local threadCode = "local env, shared = loadfile('data/lua/env/envInit.lua')('[" .. tostring(name) .. "]')"
+	local threadCode = env.getThreadInitCode(name)
 	
 	dlog("Load thread from file")
 	

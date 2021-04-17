@@ -1,3 +1,5 @@
+local env = ...
+
 local shared = {
 	__internal = {
 		buffer = {},
@@ -19,6 +21,5 @@ setmetatable(shared, {
 })
 
 
-
+env.shared = shared
 _G.shared = shared
-return shared

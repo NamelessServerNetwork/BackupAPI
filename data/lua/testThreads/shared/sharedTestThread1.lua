@@ -1,7 +1,13 @@
-local env, shared = loadfile("data/lua/env/envInit.lua")("[SHARED_TEST_THREAD#1]")
+log("--===== SHARED TEST THREAD#1 START ======--")
 
-print("--===== SHARED TEST THREAD#1 START ======--")
+local channel = env.thread.getChannel("test1")
 
+local t1 = {}
+setmetatable(t1, {test = "meta_test1"})
 
+dlog(channel:push("t1"))
+dlog(channel:push(2))
+dlog(channel:push({test = "t3"}))
+dlog(channel:push(t1))
 
-print("--===== SHARED TEST THREAD#1 END ======--")
+log("--===== SHARED TEST THREAD#1 END ======--")
