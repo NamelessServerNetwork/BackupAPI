@@ -1,7 +1,10 @@
 --pre initializes the env for all threads
 
 local threadName, mainThread = ...
-local env = {mainThread = mainThread}
+local env = {
+	threadName = threadName,
+	mainThread = mainThread,
+}
 
 --=== loadl devConf ===--
 local devConf = loadfile("data/lua/devConf.lua")()

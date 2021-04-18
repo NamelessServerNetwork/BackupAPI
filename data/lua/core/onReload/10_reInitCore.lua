@@ -7,5 +7,7 @@ if env.devConf.onReload.core then
 
 	local _, newEnv, newShared = loadfile("data/lua/core/init/init.lua")(env.version, env.args)
 	
+	newEnv.oldEnv = env
+	
 	env.dl.setEnv(newEnv, newShared)
 end

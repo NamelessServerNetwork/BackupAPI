@@ -1,5 +1,6 @@
 log("--===== SHARED TEST THREAD#2 START ======--")
 
+--[[
 local channel = env.thread.getChannel("test1")
 
 while true do
@@ -15,6 +16,10 @@ while true do
 	
 	sleep(1)
 end
+]]
+
+log(shared.testVal1.test)
+
 
 
 log("--===== SHARED TEST THREAD#2 END ======--")
