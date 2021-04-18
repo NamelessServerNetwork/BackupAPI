@@ -1,3 +1,14 @@
+used thread channels:
+	THREAD_REGISTRATION:
+	
+	GET_THREAD_ID:
+	
+	SHARED_REQUEST:
+	
+	SHARED_RESPONSE#[ID]:
+	
+	PROGRAM_IS_RUNNING:
+
 loadfile:
 	uses "data/" as default path after init
 

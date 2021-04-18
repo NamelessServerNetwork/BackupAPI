@@ -24,7 +24,7 @@ setmetatable(shared, {
 		return responseChannel:demand()
 	end,
 	__newindex = function(_, index, value)
-		requestChannel:push({
+		requestChannel:supply({
 			request = "set",
 			id = shared._internal.channelID,
 			index = index,

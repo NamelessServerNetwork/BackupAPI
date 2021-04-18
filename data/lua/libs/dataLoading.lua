@@ -117,8 +117,8 @@ local function load(args)
 end
 
 local function executeDir(dir, name)
-	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
 	name = name or ""
+	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
 	local scripts = load({
 		target = {}, 
 		dir = dir, 

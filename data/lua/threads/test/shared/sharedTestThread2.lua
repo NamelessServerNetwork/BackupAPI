@@ -18,7 +18,9 @@ while true do
 end
 ]]
 
-log(shared.testVal1.test)
+sleep(1)
+
+log(shared.testVal1)
 
 
 

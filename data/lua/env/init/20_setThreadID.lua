@@ -1,3 +1,6 @@
 local env = ...
 
-env.threadID = env.thread.getChannel("NEW_THREAD"):push(env.threadName)
+local idChannel = env.thread.getChannel("GET_THREAD_ID")
+
+env.threadID = idChannel:push(env.threadName)
+idChannel:pop()

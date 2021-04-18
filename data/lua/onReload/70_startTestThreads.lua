@@ -1,6 +1,7 @@
 local env, shared = ...
 
 --env.startFileThread("lua/threads/test/terminalTestThread1.lua", "TerminalTestThread#1")
+--[[
 
 log("Waiting for old test threads to stop")
 local testThreadsActiveChannel = env.thread.getChannel("TEST_THREAD_ACTIVE")
@@ -25,3 +26,8 @@ table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/sh
 table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/shared/sharedTestThread2.lua", "SharedTestThread#2")))
 table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/shared/sharedControlThread.lua", "SharedControlThread")))
 
+]]
+
+env.startFileThread("lua/threads/test/shared/sharedTestThread1.lua", "SharedTestThread#1")
+env.startFileThread("lua/threads/test/shared/sharedTestThread2.lua", "SharedTestThread#2")
+env.startFileThread("lua/threads/test/shared/sharedControlThread.lua", "SharedControlThread")

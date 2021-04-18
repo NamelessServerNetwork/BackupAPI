@@ -1,13 +1,12 @@
 log("Starting sharing manager")
 
-local shared = {} --all shared data
+local shared = {test = "T1"} --all shared data
 
 local responseChannels = {}
 
 local requestChannel = env.thread.getChannel("SHARED_REQUEST")
-local testThreadsActiveChannel = env.thread.getChannel("TEST_THREAD_ACTIVE")
 
-while testThreadsActiveChannel:peek() do
+while env.isRunning() do
 	local request = requestChannel:demand(1)
 	
 	if request ~= nil then
@@ -16,8 +15,10 @@ while testThreadsActiveChannel:peek() do
 		end
 		
 		if request.request == "get" then
+			ldlog("GET request (CID: " .. tostring(request.id) .. "): " .. tostring(request.index))
 			responseChannels[request.id]:push(shared[request.index])
 		elseif request.request == "set" then
+			ldlog("SET request (CID: " .. tostring(request.id) .. "): " .. tostring(request.index) .. ": " .. tostring(request.value))
 			shared[request.index] = request.value
 		end
 	end

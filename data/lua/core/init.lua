@@ -1,7 +1,7 @@
 local version, args = ...
 
 --===== parse args/defConf =====--
-local args = loadfile("data/lua/core/init/parseArgs.lua")(args, version) --parse args
+local args = loadfile("data/lua/core/parseArgs.lua")(args, version) --parse args
 
 --===== pre initialisation =====--
 local env, shared = loadfile("data/lua/env/envInit.lua")("[MAIN]", true)
@@ -19,6 +19,9 @@ for i, c in pairs(mainTable) do
 end
 env.version = version
 env.args = args
+
+--=== run dyn init ===--
+env.dl.executeDir("lua/core/init", "INIT")
 
 --=== load core files ===--
 dlog("Loading core files")
