@@ -4,3 +4,4 @@ dlog("Loading libs")
 
 env.thread = require("love.thread")
 env.timer = require("love.timer")
+env.serialize = require("ser")

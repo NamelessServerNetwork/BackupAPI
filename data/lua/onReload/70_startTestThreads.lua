@@ -28,6 +28,12 @@ table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/sh
 
 ]]
 
-env.startFileThread("lua/threads/test/shared/sharedTestThread1.lua", "SharedTestThread#1")
-env.startFileThread("lua/threads/test/shared/sharedTestThread2.lua", "SharedTestThread#2")
-env.startFileThread("lua/threads/test/shared/sharedControlThread.lua", "SharedControlThread")
+--env.startFileThread("lua/threads/test/shared/sharedTestThread1.lua", "SharedTestThread#1")
+--env.startFileThread("lua/threads/test/shared/sharedTestThread2.lua", "SharedTestThread#2")
+--env.startFileThread("lua/threads/test/shared/sharedControlThread.lua", "SharedControlThread")
+
+env.startFileThread("lua/threads/test/event/eventTestThread1.lua", "EventTestThread#1")
+env.startFileThread("lua/threads/test/event/eventTestThread2.lua", "EventTestThread#2")
+env.startFileThread("lua/threads/test/event/eventControllThread.lua", "eventControllThread#2")
+
+--env.startFileThread("lua/threads/test/httpTest.lua", "HTTPTest")

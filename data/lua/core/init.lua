@@ -4,7 +4,7 @@ local version, args = ...
 local args = loadfile("data/lua/core/parseArgs.lua")(args, version) --parse args
 
 --===== pre initialisation =====--
-local env, shared = loadfile("data/lua/env/envInit.lua")("[MAIN]", true)
+local env, shared = loadfile("data/lua/env/envInit.lua")({name = "[MAIN]", mainThread = "[MAIN]", id = 0})
 
 --NOTE: "data/" is now default path for loadfile.
 
@@ -29,6 +29,7 @@ loadfile(env.devConf.terminalPath .. "terminalManager.lua")(env)
 loadfile("lua/core/shutdown.lua")(env)
 
 --=== load dynamic data ===--
+
 env.dl.load({
 	target = env.commands, 
 	dir = "commands", 

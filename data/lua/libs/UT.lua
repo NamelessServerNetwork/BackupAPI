@@ -18,7 +18,7 @@
 --[[UsefullThings libary
 	
 ]]
-local UT = {version = "v0.7.2"}
+local UT = {version = "v0.7.2d"}
 
 function UT.parseArgs(...) --returns the first non nil parameter.
 	for _, a in pairs({...}) do
@@ -120,9 +120,9 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 			if type (value) == "table" and not done [value] then
 				done [value] = true
 				if lineBreak then
-					table.insert(sb, "[" .. key .. "] = {" .. lbString);
+					table.insert(sb, "[" .. tostring(key) .. "] = {" .. lbString);
 				else
-					table.insert(sb, "[" .. key .. "] = {");
+					table.insert(sb, "[" .. tostring(key) .. "] = {");
 				end
 				table.insert(sb, UT.tostring(value, lineBreak, indent + 2, done, true))
 				if lineBreak then

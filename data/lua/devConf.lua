@@ -25,6 +25,7 @@ local devConf = {
 	debug = {
 		debugLog = true,
 		lowDebugLog = false,
+		threadDebugLog = true,
 		threadEnvInitLog = false,
 	},
 }

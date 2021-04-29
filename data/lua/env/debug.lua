@@ -147,7 +147,7 @@ end
 local function fatal(...)
 	setDebugPrefix("[FATAL]")
 	plog(...)
-	love.exit(1, ...)
+	love.quit(1, ...) --ToDo: replace with an exit event once event system is done.
 end
 
 local dlog = function() end
@@ -164,6 +164,13 @@ if devConf.devMode and devConf.debug.lowDebugLog then
 		plog(...)
 	end
 end
+local tdlog = function() end
+if devConf.devMode and devConf.debug.threadDebugLog then
+	tdlog = function(...)
+		setDebugPrefix("[THREAD_DEBUG]")
+		plog(...)
+	end
+end
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)
@@ -174,6 +181,7 @@ debug.plog = plog
 debug.log = log
 debug.dlog = dlog
 debug.ldlog = ldlog
+debug.tdlog = tdlog
 debug.warn = warn
 debug.err = err
 debug.fatal = fatal
@@ -195,6 +203,7 @@ debug.global.plog = plog
 debug.global.log = log
 debug.global.dlog = dlog
 debug.global.ldlog = ldlog
+debug.global.tdlog = tdlog
 debug.global.warn = warn
 debug.global.err = err
 debug.global.fatal = fatal

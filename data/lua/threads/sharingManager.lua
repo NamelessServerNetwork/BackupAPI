@@ -6,7 +6,7 @@ local responseChannels = {}
 
 local requestChannel = env.thread.getChannel("SHARED_REQUEST")
 
-while env.isRunning() do
+local function update()
 	local request = requestChannel:demand(1)
 	
 	if request ~= nil then

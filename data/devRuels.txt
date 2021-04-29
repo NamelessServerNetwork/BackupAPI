@@ -1,5 +1,6 @@
 used thread channels:
 	THREAD_REGISTRATION:
+	ACTIVE_THREADS:
 	
 	GET_THREAD_ID:
 	
@@ -8,6 +9,9 @@ used thread channels:
 	SHARED_RESPONSE#[ID]:
 	
 	PROGRAM_IS_RUNNING:
+	
+	EVENT_QUEUE_MAIN:
+	EVENT_QUEUE_THREAD#[ID]:
 
 loadfile:
 	uses "data/" as default path after init

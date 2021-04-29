@@ -76,7 +76,6 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 							else
 								target[name] = returnValue
 							end
-							
 						end
 					end
 				end
@@ -116,6 +115,88 @@ local function load(args)
 	return target
 end
 
+local function execute(t, dir, name, callback, callbackArgs)
+	local executedFiles, failedFiles = 0, 0
+	
+	dlog("Execute: " .. name .. " (" .. dir .. ")")
+	
+	for order = 0, 100 do
+		local scripts = t[order]
+		if scripts ~= nil then
+			for name, func in pairs(scripts) do
+				ldlog("Execute: " .. name .. " (" .. tostring(func) .. ")")
+				local suc, err = xpcall(func, debug.traceback, env, shared)
+				
+				if suc == false then
+					warn("Failed to execute: " .. name)
+					warn(err)
+					failedFiles = failedFiles +1
+				else
+					if callback ~= nil then 
+						callback(err, name, callbackArgs)
+					end
+					executedFiles = executedFiles +1
+				end
+			end
+		end
+	end
+	
+	return executedFiles, failedFiles
+end
+
+local function loadDir(dir, target, name)
+	name = name or ""
+	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
+	local scripts = load({
+		target = {}, 
+		dir = dir, 
+		name = name, 
+		priorityOrder = true,
+		structured = true,
+	})
+	print("################################")
+	print(env.ut.tostring(scripts))
+	
+	local function sortIn(value, orgName, args)
+		local index = args.index
+		local name = orgName
+		local order = string.gmatch(name, "([^_]+)")()
+		local target = args.target
+		
+		if tonumber(order) ~= nil then
+			name = string.sub(name, #order +2)
+		end
+		
+		--print("F", orgName, name, index, value, args)
+		
+		
+		target[name] = value
+	end
+	
+	execute(scripts, dir, name, sortIn, {target = target})
+	
+	local function iterate(toIterate)
+		if type(toIterate) ~= "table" then return end
+		
+		for i, t in pairs(toIterate) do
+			print(i, type(tonumber(i)))
+			if tonumber(i) == nil and type(t) == "table" then
+				print(i, t)
+				
+				if toIterate[i] == nil then
+					toIterate[i] = {}
+				end
+				
+				execute(t, dir, name, sortIn, {target = t})
+			end
+			iterate(t)
+		end
+	end
+	iterate(scripts)
+	
+	print(env.ut.tostring(target))
+end
+
 local function executeDir(dir, name)
 	name = name or ""
 	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
@@ -126,27 +207,8 @@ local function executeDir(dir, name)
 		priorityOrder = true,
 	})
 	
-	local executedFiles, failedFiles = 0, 0
+	local executedFiles, failedFiles = execute(scripts, dir, name)
 	
-	dlog("Execute: " .. name .. " (" .. dir .. ")")
-	
-	for order = 0, 100 do
-		local scripts = scripts[order]
-		if scripts ~= nil then
-			for name, func in pairs(scripts) do
-				ldlog("Execute: " .. name)
-				local suc, err = xpcall(func, debug.traceback, env, shared)
-				
-				if suc == false then
-					warn("Failed to execute: " .. name)
-					warn(err)
-					failedFiles = failedFiles +1
-				else
-					executedFiles = executedFiles +1
-				end
-			end
-		end
-	end
 	log("Successfully executed: " .. tostring(executedFiles) .. " " .. name)
 	if failedFiles > 0 then
 		warn("Failed to executed: " .. tostring(failedFiles) .. " " .. name)
@@ -162,6 +224,7 @@ end
 --===== set functions =====--
 --DL.loadData = loadData
 DL.load = load
+DL.loadDir = loadDir
 DL.executeDir = executeDir
 DL.setEnv = setEnv
 
