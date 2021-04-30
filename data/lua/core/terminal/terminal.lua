@@ -135,8 +135,20 @@ function terminal.update()
 	local code, action = get_mbs(getch.non_blocking, keyTable)
 	
 	if code ~= nil then
-		--print(code, action)
-		
+		--print(action)
+		if action ~= nil then --sending key press events defined in terminalConstants.
+			local actionFragments = {}
+			for fragment in string.gmatch(action, "[^_]+") do
+				table.insert(actionFragments, fragment)
+			end
+			if actionFragments[1] == "EVENT" then
+				local event = actionFragments[2]
+				table.remove(actionFragments, 1)
+				table.remove(actionFragments, 1)
+				env.event.push(event, actionFragments)
+			end
+		end
+			
 		if action == "RELOAD" then
 			loadfile("lua/core/reload.lua")(env, shared)
 		else

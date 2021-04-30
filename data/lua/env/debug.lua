@@ -189,6 +189,13 @@ if devConf.devMode and devConf.debug.eventDebugLog then
 		plog(...)
 	end
 end
+local ledlog = function() end
+if devConf.devMode and devConf.debug.lowEventDebugLog then
+	ledlog = function(...)
+		setDebugPrefix("[LOW_EVENT_DEBUG]")
+		plog(...)
+	end
+end
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)
@@ -201,6 +208,7 @@ debug.dlog = dlog
 debug.ldlog = ldlog
 debug.tdlog = tdlog
 debug.edlog = edlog
+debug.ledlog = ledlog
 debug.warn = warn
 debug.err = err
 debug.fatal = fatal
@@ -224,6 +232,7 @@ debug.global.dlog = dlog
 debug.global.ldlog = ldlog
 debug.global.tdlog = tdlog
 debug.global.edlog = edlog
+debug.global.ledlog = ledlog
 debug.global.warn = warn
 debug.global.err = err
 debug.global.fatal = fatal

@@ -36,6 +36,6 @@ table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/sh
 --env.startFileThread("lua/threads/test/event/eventTestThread2.lua", "EventTestThread#2")
 --env.startFileThread("lua/threads/test/event/eventControllThread.lua", "eventControllThread#2")
 
---env.startFileThread("lua/threads/test/httpTest.lua", "HTTPTest")
+env.startFileThread("lua/threads/test/httpTest.lua", "HTTPTest")
 
 --env.startFileThread("lua/threads/test/corr.lua", "CORRUPTION_TEST_THREAD")

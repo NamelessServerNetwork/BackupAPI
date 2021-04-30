@@ -1,1 +1,1 @@
-love.quit(0)
+env.stopProgram()

@@ -1,5 +1,7 @@
 log("Starting HTTP test")
 
+env.event.listen("reloadHttpServerCallback", function() print("RELOOOAAAAAADDDDDDDDD") end)
+
 --[[
 A simple HTTP server
 
@@ -81,7 +83,7 @@ end
 --assert(myserver:loop())
 
 
-while env.isRunning() do
+local function update()
 	assert(myserver:step(1))
-	--print("T")
+	--print("HTTP: " .. tostring(env.getThreadInfos().id))
 end

@@ -28,6 +28,7 @@ local devConf = {
 		threadDebugLog = true,
 		threadEnvInitLog = false,
 		eventDebugLog = false,
+		lowEventDebugLog = true,
 	},
 }
 

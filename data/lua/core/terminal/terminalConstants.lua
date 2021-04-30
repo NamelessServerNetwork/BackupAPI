@@ -16,6 +16,9 @@ constants.keyTable = {
 				[53] = {
 					[126] = "RELOAD",
 				},
+				[57] = {
+					[126] = "EVENT_reloadHttpServerCallback",
+				},
 			},
 			[52] = {
 				[126] = "end",

@@ -13,7 +13,7 @@ setmetatable(event, {_internal = _internal})
 function event.listen(eventName, callback)
 	local threadInfos = env.getThreadInfos()
 	local registrateListener = false
-	ldlog("Register new event listener: " .. tostring(eventName) .. " to: " .. tostring(callback))
+	ledlog("Register new event listener: " .. tostring(eventName) .. " to: " .. tostring(callback))
 	if _internal.listeners[eventName] == nil then 
 		_internal.listeners[eventName] = {}
 		registrateListener = true
@@ -29,7 +29,7 @@ function event.ignore(eventName, callback, executeEventQueueFirst)
 	end
 	if _internal.listeners[eventName] ~= nil and _internal.listeners[eventName][callback] ~= nil then
 		local threadInfos = env.getThreadInfos()
-		ldlog("Ignore event listener: " .. tostring(eventName) .. " for: " .. tostring(callback))
+		ledlog("Ignore event listener: " .. tostring(eventName) .. " for: " .. tostring(callback))
 		_internal.listeners[eventName][callback] = nil
 		for _ in pairs(_internal.listeners[eventName]) do return true end --only continues if no event listener is active.
 		_internal.listeners[eventName] = nil
@@ -39,7 +39,7 @@ end
 function event.ignoreAll(eventName)
 	local function ignoreEvent(eventName)
 		if _internal.listeners[eventName] ~= nil then
-			ldlog("Ignore all events: " .. eventName)
+			ledlog("Ignore all events: " .. eventName)
 			for callback in pairs(_internal.listeners[eventName]) do
 				event.ignore(eventName, callback)
 			end
@@ -74,6 +74,7 @@ function event.pull(waitTime)
 		
 		if _internal.listeners[event.eventName] ~= nil then
 			for callback in pairs(_internal.listeners[event.eventName]) do
+				ledlog("Calling event callback for: " .. event.eventName .. " : " .. tostring(callback))
 				local suc, err = xpcall(callback, debug.traceback, event.data)
 				
 				if suc ~= true then
