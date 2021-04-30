@@ -24,10 +24,10 @@ local devConf = {
 	
 	debug = {
 		debugLog = true,
-		lowDebugLog = true,
+		lowDebugLog = false,
 		threadDebugLog = true,
 		threadEnvInitLog = false,
-		eventDebugLog = true,
+		eventDebugLog = false,
 	},
 }
 

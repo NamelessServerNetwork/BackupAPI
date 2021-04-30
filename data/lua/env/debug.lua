@@ -30,7 +30,7 @@ local function getFuncPrefix(stackLevel, fullPrefixStack)
 	local prefixTable
 	if fullPrefixStack == nil then fullPrefixStack = true end
 	
-	if stackLevel == nil or type(stackLevel) == "number" then
+	if stackLevel == nil or type(stackLevel) == "number" then 
 		prefix, exclusive, fullStack = getFuncPrefix(orgDebug.getinfo(stackLevel or 2).func)
 	elseif type(stackLevel) == "function" then
 		local prefixTable = debug.internal.functionPrefixes[stackLevel]
