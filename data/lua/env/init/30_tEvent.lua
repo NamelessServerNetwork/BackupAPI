@@ -1,6 +1,6 @@
 local eventQueueMain = env.thread.getChannel("EVENT_QUEUE_MAIN")
 local listnerRegistation = env.thread.getChannel("EVENT_LISTENER_REGISTRATION")
-local eventQueueOwn = env.thread.getChannel("EVENT_QUEUE_THREAD#" .. tostring(env.getThreadID()))
+local eventQueueOwn = env.thread.getChannel("EVENT_QUEUE_THREAD#" .. tostring(env.getThreadInfos().id))
 
 debug.setFuncPrefix("[EVENT_API]")
 
@@ -11,19 +11,48 @@ local _internal = {
 setmetatable(event, {_internal = _internal})
 
 function event.listen(eventName, callback)
+	local threadInfos = env.getThreadInfos()
+	local registrateListener = false
 	ldlog("Register new event listener: " .. tostring(eventName) .. " to: " .. tostring(callback))
 	if _internal.listeners[eventName] == nil then 
 		_internal.listeners[eventName] = {}
+		registrateListener = true
 	end
 	_internal.listeners[eventName][callback] = true
-	listnerRegistation:push({request = "listen", eventName = eventName, threadID = env.getThreadID()})
+	if registrateListener then
+		listnerRegistation:push({request = "listen", eventName = eventName, threadID = threadInfos.id, threadName = threadInfos.name})
+	end
 end
-function event.ignore(eventName, callback)
+function event.ignore(eventName, callback, executeEventQueueFirst)
+	if executeEventQueueFirst then
+		event.pull()
+	end
 	if _internal.listeners[eventName] ~= nil and _internal.listeners[eventName][callback] ~= nil then
+		local threadInfos = env.getThreadInfos()
 		ldlog("Ignore event listener: " .. tostring(eventName) .. " for: " .. tostring(callback))
 		_internal.listeners[eventName][callback] = nil
-		for _ in pairs(_internal.listeners[eventName]) do return true end
-		listnerRegistation:push({request = "ignore", eventName = eventName, threadID = env.getThreadID()})
+		for _ in pairs(_internal.listeners[eventName]) do return true end --only continues if no event listener is active.
+		_internal.listeners[eventName] = nil
+		listnerRegistation:push({request = "ignore", eventName = eventName, threadID = threadInfos.id, threadName = threadInfos.name})
+	end
+end
+function event.ignoreAll(eventName)
+	local function ignoreEvent(eventName)
+		if _internal.listeners[eventName] ~= nil then
+			ldlog("Ignore all events: " .. eventName)
+			for callback in pairs(_internal.listeners[eventName]) do
+				event.ignore(eventName, callback)
+			end
+			_internal.listeners[eventName] = nil
+		end
+	end
+	
+	if eventName ~= nil then
+		ignoreEvent(eventName)
+	else
+		for event in pairs(_internal.listeners) do
+			ignoreEvent(event)
+		end
 	end
 end
 

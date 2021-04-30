@@ -11,7 +11,7 @@ return function(code, initData)
 		
 		do
 			local suc, err = xpcall(function()	
-				if type(update) == 'function' then
+				if type(update) == 'function' then --main while (incl. event handler)
 					while env.isRunning() do
 						local suc, err
 						
@@ -23,11 +23,22 @@ return function(code, initData)
 							debug.fatal(suc, err)
 						end
 					end
-				else
+				else --only event handler
 					while env.isRunning() do
 						env.event.pull(1)
 					end
 				end
+				
+				do --on program stop
+					if type(stop) == "function" then
+						local suc, err = xpcall(stop, debug.traceback)
+						
+						if suc ~= true then
+							debug.fatal(suc, err)
+						end
+					end
+				end
+				
 			end, debug.traceback)
 			if suc ~= true then
 				debug.setLogPrefix("[INTERNAL_ERROR]" .. debug.getLogPrefix())

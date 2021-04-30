@@ -2,14 +2,16 @@
 
 local initData = ...
 local env = {
-	threadName = initData.name,
+	--threadName = initData.name,
 	mainThread = initData.mainThread,
 	initData = initData,
 }
 local _internal = {
 	threadID = initData.id,
+	threadName = initData.name,
 }
 setmetatable(env, {_internal = _internal})
+_G.env = env
 
 --=== loadl devConf ===--
 local devConf = loadfile("data/lua/devConf.lua")()
@@ -19,7 +21,7 @@ package.path = package.path .. ";" .. devConf.requirePath
 package.cpath = package.cpath .. ";" .. devConf.cRequirePath
 
 --=== set debug ===--
-env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(env.threadName) .. "[ENV_INIT]")
+env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(_internal.threadName) .. "[ENV_INIT]")
 
 --=== disable env init logs for non main threads ===--
 local orgLog = env.debug.log
@@ -43,7 +45,7 @@ env.ut = require("UT")
 env.dl = loadfile("lua/libs/dataLoading.lua")(env)
 
 dlog("Initialize the environment")
-debug.setLogPrefix(tostring(env.threadName))
+debug.setLogPrefix(tostring(_internal.threadName))
 
 env.dl.executeDir("lua/env/init", "envInit")
 

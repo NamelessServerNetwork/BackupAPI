@@ -3,7 +3,7 @@ local env = ...
 local shared = {
 }
 local _internal = {
-	channelID = env.getThreadID(),
+	channelID = env.getThreadInfos(),
 }
 setmetatable(shared, {_internal = _internal})
 

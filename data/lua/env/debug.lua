@@ -147,7 +147,18 @@ end
 local function fatal(...)
 	setDebugPrefix("[FATAL]")
 	plog(...)
-	love.quit(1, ...) --ToDo: replace with an exit event once event system is done.
+	--love.quit(1, ...) --ToDo: replace with an exit event once event system is done.
+	--os.exit(1)
+	if _G.env.stopProgram() then
+		_G.env.stopProgram()
+	else
+		io.stderr:write("Usual stopProgram routine not avaiable. Not even fully initialized?")
+		for _, line in pairs({...}) do
+			io.stderr:write(tostring(line))
+		end
+		io.stderr:flush()
+		os.exit(1)
+	end
 end
 
 local dlog = function() end

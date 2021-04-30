@@ -14,10 +14,10 @@ local function registrateNewListeners()
 		end
 		
 		if request.request == "listen" then
-			edlog("Registrate new listener thread: " .. tostring(request.threadID .. " for event: " .. request.eventName))
+			edlog("Registrate new listener thread: " .. tostring(request.threadName) .. "(" .. tostring(request.threadID) .. ")" .. " for event: " .. request.eventName)
 			listeners[request.eventName][request.threadID] = env.thread.getChannel("EVENT_QUEUE_THREAD#" .. tostring(request.threadID))
 		elseif request.request == "ignore" then
-			edlog("Ignore listener thread: " .. tostring(request.threadID .. " for event: " .. request.eventName))
+			edlog("Ignore listener thread: " .. tostring(request.threadName) .. "(" .. tostring(request.threadID) .. ")" .. " for event: " .. request.eventName)
 			listeners[request.eventName][request.threadID] = nil
 		end
 	end

@@ -1,5 +1,5 @@
 function love.quit()
-	print("SHUTTING DOWN")
+	log("SHUTTING DOWN")
 	
-	os.exit(0)
+	love.update() --printing the terminal a last time
 end
