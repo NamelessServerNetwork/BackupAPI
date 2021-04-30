@@ -4,9 +4,12 @@ local initData = ...
 local env = {
 	threadName = initData.name,
 	mainThread = initData.mainThread,
-	threadID = initData.id,
 	initData = initData,
 }
+local _internal = {
+	threadID = initData.id,
+}
+setmetatable(env, {_internal = _internal})
 
 --=== loadl devConf ===--
 local devConf = loadfile("data/lua/devConf.lua")()

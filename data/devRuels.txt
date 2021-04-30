@@ -12,6 +12,7 @@ used thread channels:
 	
 	EVENT_QUEUE_MAIN:
 	EVENT_QUEUE_THREAD#[ID]:
+	EVENT_LISTENER_REGISTRATION:
 
 loadfile:
 	uses "data/" as default path after init

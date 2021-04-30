@@ -3,6 +3,8 @@ local env, shared = ...
 local DL = {}
 local pa = env.ut.parseArgs
 
+local defaultFileCode = [[local env, shared = ...;]]
+
 --===== lib functions =====--
 local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, priorityOrder, loadFunc, executeFiles)
 	local path = dir .. "/" --= env.shell.getWorkingDirectory() .. "/" .. dir .. "/"
@@ -48,7 +50,14 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 				if loadFunc ~= nil then
 					suc, err = loadFunc(path .. file)
 				else
-					suc, err = loadfile(path .. file)
+					--suc, err = loadfile(path .. file)
+					local fileCode, fileErr = env.ut.readFile("data/" .. path .. file)
+					print(path .. file)
+					if fileCode == nil then
+						suc, err = nil, fileErr
+					else
+						suc, err = loadstring(defaultFileCode .. fileCode)
+					end
 				end
 				
 				--target[name or string.sub(p, 0, #p -1)] = suc

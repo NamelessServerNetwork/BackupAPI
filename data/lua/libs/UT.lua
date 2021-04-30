@@ -18,7 +18,7 @@
 --[[UsefullThings libary
 	
 ]]
-local UT = {version = "v0.7.2d"}
+local UT = {version = "v0.8"}
 
 function UT.parseArgs(...) --returns the first non nil parameter.
 	for _, a in pairs({...}) do
@@ -151,6 +151,18 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 		return table.concat(sb)
 	else
 		return var .. lbString
+	end
+end
+
+function UT.readFile(path)
+	local file, err = io.open(path, "rb")
+	
+	if file == nil then 
+		return nil, err 
+	else
+		local fileContent = file:read("*all")
+		file:close()
+		return fileContent
 	end
 end
 

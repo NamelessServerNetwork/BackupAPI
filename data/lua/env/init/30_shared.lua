@@ -1,13 +1,14 @@
 local env = ...
 
 local shared = {
-	_internal = {
-		channelID = env.threadID,
-	},
 }
+local _internal = {
+	channelID = env.getThreadID(),
+}
+setmetatable(shared, {_internal = _internal})
 
 local requestChannel = env.thread.getChannel("SHARED_REQUEST")
-local responseChannel = env.thread.getChannel("SHARED_RESPONSE#" .. tostring(shared._internal.channelID))
+local responseChannel = env.thread.getChannel("SHARED_RESPONSE#" .. tostring(_internal.channelID))
 
 --=== set meta tables ===--
 debug.setFuncPrefix("[SHARED]")
@@ -17,7 +18,7 @@ setmetatable(shared, {
 	__index = function(_, index)
 		requestChannel:push({
 			request = "get",
-			id = shared._internal.channelID,
+			id = _internal.channelID,
 			index = index,
 		})
 		
@@ -26,7 +27,7 @@ setmetatable(shared, {
 	__newindex = function(_, index, value)
 		requestChannel:supply({
 			request = "set",
-			id = shared._internal.channelID,
+			id = _internal.channelID,
 			index = index,
 			value = value,
 		})
@@ -35,4 +36,4 @@ setmetatable(shared, {
 
 
 env.shared = shared
-_G.shared = shared
+--_G.shared = shared
