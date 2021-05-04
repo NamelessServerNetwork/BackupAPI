@@ -9,6 +9,7 @@ local env = {
 local _internal = {
 	threadID = initData.id,
 	threadName = initData.name,
+	threadIsActive = true,
 }
 setmetatable(env, {_internal = _internal})
 _G.env = env
@@ -17,8 +18,8 @@ _G.env = env
 local devConf = loadfile("data/lua/devConf.lua")()
 env.devConf = devConf
 
-package.path = package.path .. ";" .. devConf.requirePath
-package.cpath = package.cpath .. ";" .. devConf.cRequirePath
+package.path = devConf.requirePath .. ";" .. package.path
+package.cpath = devConf.cRequirePath .. ";" .. package.cpath
 
 --=== set debug ===--
 env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(_internal.threadName) .. "[ENV_INIT]")
