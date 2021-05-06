@@ -161,54 +161,35 @@ local function fatal(...)
 	end
 end
 
-local dlog = function() end
-if devConf.devMode and devConf.debug.debugLog then
-	dlog = function(...)
-		setDebugPrefix("[DEBUG]")
-		plog(...)
+--===== add advanced log levels =====--
+local function addDebugLogLevel(name, prefix, confLevelIndex, global)
+	local func = function(...) end
+	
+	if devConf.devMode and devConf.debug.logLevel[confLevelIndex] then
+		func = function(...)
+			setDebugPrefix(prefix)
+			plog(...)
+		end
 	end
-end
-local ldlog = function() end
-if devConf.devMode and devConf.debug.lowDebugLog then
-	ldlog = function(...)
-		setDebugPrefix("[LOW_DEBUG]")
-		plog(...)
-	end
-end
-local tdlog = function() end
-if devConf.devMode and devConf.debug.threadDebugLog then
-	tdlog = function(...)
-		setDebugPrefix("[THREAD_DEBUG]")
-		plog(...)
-	end
-end
-local edlog = function() end
-if devConf.devMode and devConf.debug.eventDebugLog then
-	edlog = function(...)
-		setDebugPrefix("[EVENT_DEBUG]")
-		plog(...)
-	end
-end
-local ledlog = function() end
-if devConf.devMode and devConf.debug.lowEventDebugLog then
-	ledlog = function(...)
-		setDebugPrefix("[LOW_EVENT_DEBUG]")
-		plog(...)
+	
+	debug[name] = func
+	if global then
+		debug.global[name] = func
 	end
 end
 
+addDebugLogLevel("dlog", "[DEBUG]", "debug", true)
+addDebugLogLevel("ldlog", "[LOW_DEBUG]", "lowLevelDebug", true)
+addDebugLogLevel("tdlog", "[THREAD_DEBUG]", "threadDebug", true)
+addDebugLogLevel("edlog", "[EVENT_DEBUG]", "eventDebug", true)
+addDebugLogLevel("ledlog", "[LOW_EVENT_DEBUG]", "lowLevelEventDebug", true)
+
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)
---dlog("set debug functions")
 
 debug.clog = clog
 debug.plog = plog
 debug.log = log
-debug.dlog = dlog
-debug.ldlog = ldlog
-debug.tdlog = tdlog
-debug.edlog = edlog
-debug.ledlog = ledlog
 debug.warn = warn
 debug.err = err
 debug.fatal = fatal
@@ -223,26 +204,14 @@ debug.setDebugPrefix = setDebugPrefix
 debug.getDebugPrefix = getDebugPrefix
 
 --===== set global debug functions =====--
---dlog("set global debug functions")
-
 debug.global.clog = clog
 debug.global.plog = plog
 debug.global.log = log
-debug.global.dlog = dlog
-debug.global.ldlog = ldlog
-debug.global.tdlog = tdlog
-debug.global.edlog = edlog
-debug.global.ledlog = ledlog
 debug.global.warn = warn
 debug.global.err = err
 debug.global.fatal = fatal
 
---===== initialize =====--
---dlog("initialize debug environment")
-
 --=== set global metatables ===--
---dlog("set global debug metatables")
-
 _G.debug = setmetatable(orgDebug, {__index = function(t, i)
 	if debug[i] ~= nil then
 		return debug[i]

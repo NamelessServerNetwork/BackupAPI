@@ -28,7 +28,7 @@ env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(_internal.threa
 local orgLog = env.debug.log
 local orgDlog = env.debug.dlog
 local orgLdlog = env.debug.ldlog
-if not env.mainThread and not env.devConf.debug.threadEnvInitLog then
+if not env.mainThread and not env.devConf.debug.logLevel.threadEnvInit then
 	_G.log = function() end
 	_G.dlog = function() end
 	_G.ldlog = function() end
