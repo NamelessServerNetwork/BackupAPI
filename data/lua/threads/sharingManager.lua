@@ -6,6 +6,8 @@ local responseChannels = {}
 
 local requestChannel = env.thread.getChannel("SHARED_REQUEST")
 
+local ldlog = debug.lowLevelSharingLog 
+
 local function update()
 	local request = requestChannel:demand(1)
 	

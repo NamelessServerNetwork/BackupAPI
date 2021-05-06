@@ -16,5 +16,6 @@ dlog(channel:push(thread))
 ]]
 
 shared.testVal1 = {test = "T1"}
+shared.testTable1 = {tt = {test = "TT content 1"}}
 
 log("--===== SHARED TEST THREAD#1 END ======--")

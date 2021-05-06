@@ -67,4 +67,4 @@ _G.log = orgLog
 _G.dlog = orgDlog
 _G.ldlog = orgLdlog
 
-return env, shared
+return env, env.shared

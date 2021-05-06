@@ -30,6 +30,7 @@ local devConf = {
 			threadEnvInit = false,
 			eventDebug = false,
 			lowLevelEventDebug = false,
+			lowLevelSharingLog = false,
 		},
 	},
 }

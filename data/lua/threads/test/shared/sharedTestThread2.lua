@@ -22,6 +22,10 @@ sleep(1)
 
 log(shared.testVal1)
 
+log(env.ut.tostring(shared.testTable1))
+
+log(env.ut.tostring(shared.testTable1.tt.test))
+
 
 
 log("--===== SHARED TEST THREAD#2 END ======--")

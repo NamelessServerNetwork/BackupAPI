@@ -183,6 +183,7 @@ addDebugLogLevel("ldlog", "[LOW_DEBUG]", "lowLevelDebug", true)
 addDebugLogLevel("tdlog", "[THREAD_DEBUG]", "threadDebug", true)
 addDebugLogLevel("edlog", "[EVENT_DEBUG]", "eventDebug", true)
 addDebugLogLevel("ledlog", "[LOW_EVENT_DEBUG]", "lowLevelEventDebug", true)
+addDebugLogLevel("lowLevelSharingLog", "[LOW_SHARING_DEBUG]", "lowLevelSharingLog", false)
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)

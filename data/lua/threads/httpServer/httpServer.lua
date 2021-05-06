@@ -7,7 +7,7 @@ log("Initialize HTTP server")
 
 local http_server = require("http.server")
 
-local port = 8022 -- 0 means pick one at random
+local port = 8023 -- 0 means pick one at random
 
 env.httpCQ = {lastID = 0}
 
@@ -40,8 +40,8 @@ local myserver = http_server.listen({
 		if err then
 			msg = msg .. ": " .. tostring(err)
 		end
-		assert(debug.err(msg, "\n"))
-		fatal("HTTP ERROR")
+		debug.err("HTTP SERVER ERROR:")
+		debug.err(msg, "\n")
 	end;
 })
 
@@ -70,7 +70,8 @@ log("HTTP server initialization done")
 
 local count = 0
 local function update()
-	if count > 3000 then --debug
+	local stopAtHighCount = false --debug
+	if count > 3000 and stopAtHighCount then 
 		fatal("too many counts")
 	else
 		assert(myserver:step(1))

@@ -15,9 +15,12 @@ local function executeUserOrder()
 	end
 	
 	if func ~= nil then
-		resData.value = func()
+		resData.returnValue = func()
+		resHeaders.success = "true"
 	else
 		warn("Recieved unknown user action request: " .. tostring(headers.action))
+		resHeaders.success = "false"
+		resHeaders.error = "Invalid user action"
 	end
 end
 
@@ -26,10 +29,20 @@ do
 	if suc ~= true then
 		debug.err(suc, err)
 		resHeaders.success = "false"
-	else
-		resHeaders.success = "true"
+		resHeaders.error = "User script crash"
+		resData.scriptError = tostring(err)
 	end
 end
+
+
+do --debug
+	if type(shared.requestCount) ~= "number" then
+		shared.requestCount = 0
+	end
+	shared.requestCount = shared.requestCount +1
+	resData.requestCount = tostring(shared.requestCount) .. " (debug)"
+end
+
 
 callbackStream:push({headers = resHeaders, data = resData})
 ldlog("CALLBACK THREAD END")
