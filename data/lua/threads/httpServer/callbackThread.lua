@@ -5,22 +5,23 @@ local callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring
 local resHeaders = {}
 local resData = {}
 
-local headers = env.initData.args
+local request = env.initData.args
 
 local function executeUserOrder()
 	local func, err
+	local action = request.action
 	
-	if headers.action ~= nil then
-		func, err = loadfile("userActions/" .. headers.action .. ".lua")
+	if action ~= nil then
+		func, err = loadfile("userActions/" .. action .. ".lua")
 	end
 	
 	if func ~= nil then
-		resData.returnValue = func()
-		resHeaders.success = "true"
+		resData.returnValue = func(env, shared, request)
+		resData.success = "true"
 	else
-		warn("Recieved unknown user action request: " .. tostring(headers.action))
-		resHeaders.success = "false"
-		resHeaders.error = "Invalid user action"
+		warn("Recieved unknown user action request: " .. tostring(action))
+		resData.success = "false"
+		resData.error = "Invalid user action"
 	end
 end
 
@@ -28,8 +29,8 @@ do
 	local suc, err = xpcall(executeUserOrder, debug.traceback)
 	if suc ~= true then
 		debug.err(suc, err)
-		resHeaders.success = "false"
-		resHeaders.error = "User script crash"
+		resData.success = "false"
+		resData.error = "User script crash"
 		resData.scriptError = tostring(err)
 	end
 end
@@ -40,7 +41,7 @@ do --debug
 		shared.requestCount = 0
 	end
 	shared.requestCount = shared.requestCount +1
-	resData.requestCount = tostring(shared.requestCount) .. " (debug)"
+	resData.requestID = tostring(shared.requestCount)
 end
 
 

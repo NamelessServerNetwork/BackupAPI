@@ -93,7 +93,9 @@ local function get_mbs(callback, keyTable, max_i, i)
 	i = tonumber(i) or 1
 	max_i = tonumber(max_i) or 10
 	local key_code = callback(env.devConf.sleepTime)
-	--print(key_code)
+	if env.devConf.debug.logDirectInput and key_code ~= nil then
+		print(key_code)
+	end
 	if i>max_i then
 		return key_code, false
 	end
@@ -135,7 +137,9 @@ function terminal.update()
 	local code, action = get_mbs(getch.non_blocking, keyTable)
 	
 	if code ~= nil then
-		--print(action)
+		if env.devConf.debug.logInputEvent then
+			print(action)
+		end
 		if action ~= nil then --sending key press events defined in terminalConstants.
 			local actionFragments = {}
 			for fragment in string.gmatch(action, "[^_]+") do
@@ -149,8 +153,20 @@ function terminal.update()
 			end
 		end
 			
-		if action == "RELOAD" then
+		if action == "RELOAD_CORE" then
 			loadfile("lua/core/reload.lua")(env, shared)
+		elseif action == "RELOAD_USER" then
+			env.dl.executeDir("onReload", "RELOAD_USER")
+		elseif action == "RELOAD_MAIN" then
+			env.dl.executeDir("lua/onReload", "RELOAD_MAIN")
+		elseif action == "RELOAD_COMMANDS" then
+			log("Reload commands")
+			env.dl.load({
+				target = env.commands, 
+				dir = "commands", 
+				name = "commands",
+				overwrite = true,
+			})
 		else
 			textBox:update(terminalLength, code, action)
 		end

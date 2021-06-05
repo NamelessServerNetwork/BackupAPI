@@ -15,7 +15,10 @@ dlog(channel:push(t1))
 dlog(channel:push(thread))
 ]]
 
-shared.testVal1 = {test = "T1"}
-shared.testTable1 = {tt = {test = "TT content 1"}}
+--shared.testVal1 = {test = "T1"}
+--shared.testTable1 = {tt = {test = "TT content 1"}}
+
+shared.testTable2 = {}
+shared.testTable2.test = "test table test value"
 
 log("--===== SHARED TEST THREAD#1 END ======--")

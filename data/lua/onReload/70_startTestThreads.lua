@@ -1,5 +1,7 @@
 local env, shared = ...
 
+log("Start test threads")
+
 --env.startFileThread("lua/threads/test/terminalTestThread1.lua", "TerminalTestThread#1")
 --[[
 
@@ -43,3 +45,10 @@ table.insert(env.testThreads, select(2, env.startFileThread("lua/threads/test/sh
 --env.startFileThread("lua/threads/test/corr.lua", "CORRUPTION_TEST_THREAD")
 
 --env.startFileThread("lua/threads/test/argTest.lua", "argTest", {t1 = "T!"})
+
+--env.startFileThread("lua/threads/test/sqlite/inputHandler.lua", "SQLITE_BRUTEFORCE_INPUT_HANDLER")
+
+--env.startFileThread("lua/threads/test/memTest/inputHandler.lua", "MEM_LEAK_TEST_INPUT_HANDLER")
+
+
+

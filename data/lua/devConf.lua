@@ -1,10 +1,13 @@
 local devConf = {
+	userLoginDatabasePath = "userLogin.sqlite3",
+	
 	requirePath = "data/lua/libs/?.lua;data/lua/libs/thirdParty/?.lua",
 	cRequirePath = "data/bin/libs/?.so",
 	terminalPath = "lua/core/terminal/",
 	
 	sleepTime = .1, --the time the terminal is waiting for an input. this affect the CPU time as well as the time debug messanges needs to be updated.
 	
+
 	devMode = true,
 	
 	terminal = {
@@ -18,11 +21,18 @@ local devConf = {
 		},
 	},
 	
+	sqlite = {
+		busyWaitTime = .05, --defines the time the system waits every time the sqlite DB is busy.
+	},
+	
 	onReload = {
 		core = true,
 	},
 	
 	debug = {
+		logDirectInput = false,
+		logInputEvent = false,
+		
 		logLevel = {
 			debug = true,
 			lowLevelDebug = false,

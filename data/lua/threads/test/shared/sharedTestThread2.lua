@@ -1,4 +1,3 @@
-log("--===== SHARED TEST THREAD#2 START ======--")
 
 --[[
 local channel = env.thread.getChannel("test1")
@@ -20,12 +19,16 @@ end
 
 sleep(1)
 
-log(shared.testVal1)
+log("--===== SHARED TEST THREAD#2 START ======--")
 
-log(env.ut.tostring(shared.testTable1))
+--log(shared.testVal1)
 
-log(env.ut.tostring(shared.testTable1.tt.test))
+--log(env.ut.tostring(shared.testTable1))
 
+--log(env.ut.tostring(shared.testTable1.tt.test))
 
+log(env.ut.tostring(shared.testTable2))
+--log(env.ut.tostring(getmetatable(shared.testTable2)))
+log(env.ut.tostring(shared.testTable2.test))
 
 log("--===== SHARED TEST THREAD#2 END ======--")

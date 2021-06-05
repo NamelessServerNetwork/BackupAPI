@@ -36,6 +36,9 @@ env.dl.load({
 	name = "commands",
 })
 
+log("Initialize user init")
+env.dl.executeDir("init", "USER_INIT")
+
 log("Initialization done")
 
 return true, env, shared

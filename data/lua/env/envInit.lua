@@ -52,7 +52,16 @@ env.dl.executeDir("lua/env/init", "envInit")
 
 dlog("Load dynamic env data")
 
+env.dyn = {}
 env.dl.load({
+	target = env.dyn, 
+	dir = "lua/env/dynData", 
+	name = "dynData", 
+	structured = true,
+	execute = true,
+})
+
+env.dl.load({ --legacy
 	target = env, 
 	dir = "lua/env/dynData", 
 	name = "dynData", 
