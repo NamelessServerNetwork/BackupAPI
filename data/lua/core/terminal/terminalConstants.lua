@@ -47,13 +47,13 @@ constants.keyTable = {
 				[126] = "insert",
 				
 				[48] = { --f9
-					[126] = "RELOAD_USER",
+					[126] = "RELOAD_COMMANDS",
 				},
 				[49] = { --f10
-					[126] = "RELOAD_MAIN",
+					[126] = "RELOAD_USER",
 				},
 				[51] = { --f11
-					[126] = "RELOAD_COMMANDS",
+					[126] = "RELOAD_SYSTEM",
 				},
 				[52] = { --f12
 					[126] = "RELOAD_CORE",

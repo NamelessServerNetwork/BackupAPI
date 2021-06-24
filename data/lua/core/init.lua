@@ -21,6 +21,7 @@ env.version = version
 env.args = args
 
 --=== run dyn init ===--
+log("Initialize core level")
 env.dl.executeDir("lua/core/init", "INIT")
 
 --=== load core files ===--
@@ -36,8 +37,11 @@ env.dl.load({
 	name = "commands",
 })
 
-log("Initialize user init")
-env.dl.executeDir("init", "USER_INIT")
+log("Initialize system level")
+env.dl.executeDir("lua/init", "INIT_SYSTEM")
+
+log("Initialize user level")
+env.dl.executeDir("init", "INIT_USER")
 
 log("Initialization done")
 

@@ -3,6 +3,7 @@ interpreter:
 
 luarocks:
 	lsqlite3complete
+	argon2
 	
 clibs:
 	getch:

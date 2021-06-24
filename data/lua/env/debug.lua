@@ -115,6 +115,7 @@ local function clog(...) --clean log
 	
 	print("[" .. os.date("%X") .. "]" .. getInternalPrefix() .. msgs)
 	setInternalPrefix("")
+	return ...
 end
 local function plog(...)
 	local prefix = ""
@@ -131,18 +132,22 @@ local function plog(...)
 	clog(...)
 	
 	setDebugPrefix("")
+	return ...
 end
 local function log(...)
 	setDebugPrefix("[INFO]")
 	plog(...)
+	return ...
 end
 local function warn(...)
 	setDebugPrefix("[WARN]")
 	plog(...)
+	return ...
 end
 local function err(...)
 	setDebugPrefix("[ERROR]")
 	plog(...)
+	return ...
 end
 local function fatal(...)
 	setDebugPrefix("[FATAL]")
@@ -159,16 +164,18 @@ local function fatal(...)
 		io.stderr:flush()
 		os.exit(1)
 	end
+	return ...
 end
 
 --===== add advanced log levels =====--
 local function addDebugLogLevel(name, prefix, confLevelIndex, global)
-	local func = function(...) end
+	local func = function(...) return ... end
 	
 	if devConf.devMode and devConf.debug.logLevel[confLevelIndex] then
 		func = function(...)
 			setDebugPrefix(prefix)
 			plog(...)
+			return ...
 		end
 	end
 	
