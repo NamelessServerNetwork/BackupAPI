@@ -1,5 +1,5 @@
 local devConf = {
-	userLoginDatabasePath = "userLogin.sqlite3",
+	userLoginDatabasePath = "users.sqlite3",
 	
 	requirePath = "data/lua/libs/?.lua;data/lua/libs/thirdParty/?.lua",
 	cRequirePath = "data/bin/libs/?.so",

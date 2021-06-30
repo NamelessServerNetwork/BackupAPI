@@ -33,7 +33,7 @@ loadfile("lua/core/shutdown.lua")(env)
 
 env.dl.load({
 	target = env.commands, 
-	dir = "commands", 
+	dir = "userData/commands", 
 	name = "commands",
 })
 
@@ -41,7 +41,7 @@ log("Initialize system level")
 env.dl.executeDir("lua/init", "INIT_SYSTEM")
 
 log("Initialize user level")
-env.dl.executeDir("init", "INIT_USER")
+env.dl.executeDir("userData/init", "INIT_USER")
 
 log("Initialization done")
 

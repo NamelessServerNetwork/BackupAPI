@@ -2,8 +2,12 @@
 
 log("Start")
 
-local function bruteforce()
-	env.startFileThread("lua/threads/test/sqlite/sqliteBruteForceManager.lua", "SQLITE_BRUTEFORCE_MANAGER")
+local function bruteforce(task)
+	for _, t in pairs(task) do
+		if t == "B" then
+			env.startFileThread("lua/threads/test/sqlite/sqliteBruteForceManager.lua", "SQLITE_BRUTEFORCE_MANAGER")
+		end
+	end
 end
 
 

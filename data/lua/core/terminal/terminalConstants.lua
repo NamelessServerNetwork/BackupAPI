@@ -33,7 +33,7 @@ constants.keyTable = {
 					
 				},
 				[56] = { --f7
-					[126] = "EVENT_sqliteTest1",
+					[126] = "EVENT_sqliteTest1_L",
 				},
 				[57] = { --f8
 					[126] = "EVENT_reloadHttpServerCallback",

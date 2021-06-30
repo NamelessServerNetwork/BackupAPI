@@ -46,7 +46,7 @@ function terminal.input(input)
 		local suc, err = xpcall(env.commands[command], debug.traceback, env, args)
 		
 		plog(suc, err)
-	else
+	elseif command ~= "" then
 		plog("Command \"" .. command .. "\" not found")
 	end
 end

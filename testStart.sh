@@ -2,5 +2,5 @@
 
 #./data/bin/love ./data $@
 
-cd ./data/test/love
+cd ./data/userData/test/love
 /data/dams/data/bin/love ./ $@

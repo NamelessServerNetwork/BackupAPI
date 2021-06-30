@@ -156,14 +156,14 @@ function terminal.update()
 		if action == "RELOAD_CORE" then
 			loadfile("lua/core/reload.lua")(env, shared)
 		elseif action == "RELOAD_USER" then
-			env.dl.executeDir("onReload", "RELOAD_USER")
+			env.dl.executeDir("userData/onReload", "RELOAD_USER")
 		elseif action == "RELOAD_SYSTEM" then
 			env.dl.executeDir("lua/onReload", "RELOAD_SYSTEM")
 		elseif action == "RELOAD_COMMANDS" then
 			log("Reload commands")
 			env.dl.load({
 				target = env.commands, 
-				dir = "commands", 
+				dir = "userData/commands", 
 				name = "commands",
 				overwrite = true,
 			})
