@@ -6,31 +6,30 @@ local createSysinfoEntry = true
 
 ldlog(db, err)
 
-dlog("Create tables")
-log(db:exec([[
+dlog("Create sysinfo table: " .. tostring(db:exec([[
 	CREATE TABLE sysinfo (
 		userCount INTEGER NOT NULL
 	);
-]]))
+]])))
 
-log(db:exec([[
+dlog("Create users table: " .. tostring(db:exec([[
 	CREATE TABLE users (
 		username TEXT NOT NULL,
 		password TEXT NOT NULL,
 		id INTEGER NOT NULL
 	);
-]]))
+]])))
 
-log(db:exec([[
+dlog("Create permissions table: " .. tostring(db:exec([[
 	CREATE TABLE permissions (
 		permission TEXT NOT NULL,
 		userID TEXT NOT NULL,
 		value INTEGER NOT NULL
 	);
-]]))
+]])))
 
-dlog("Prepare sysinfo table")
-log(env.userDB:exec([[
+
+dlog("Prepare sysinfo table: " .. tostring(env.userDB:exec([[
 	SELECT userCount FROM sysinfo
 ]], function(udata,cols,values,names)
 	for i=1,cols do 
@@ -39,11 +38,10 @@ log(env.userDB:exec([[
 		end
 	end
 	return 0
-end))
+end)))
 
 if createSysinfoEntry then
-	log("Create sysinfo entry")
-	db:exec([[INSERT INTO sysinfo VALUES (0);]])
+	dlog("Create sysinfo entry: " .. tostring(db:exec([[INSERT INTO sysinfo VALUES (0);]])))
 end
 
 db:close()

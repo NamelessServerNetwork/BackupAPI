@@ -14,7 +14,7 @@ return function(username, password)
 	
 	db:exec([[SELECT username FROM users WHERE username = "]] .. username .. [["]], function(udata, cols, values, names)
 		createUser = false
-		suc = 1
+		suc = -101
 		reason = "Username already taken"
 		return 0
 	end)
@@ -26,7 +26,7 @@ return function(username, password)
 	
 	db:exec([[SELECT userCount FROM sysinfo WHERE userCount = "]] .. tostring(userID) .. [["]], function(udata, cols, values, names)
 		createUser = false
-		suc = -99
+		suc = -301
 		reason = "UserID already taken"
 		return 0
 	end)
@@ -44,7 +44,7 @@ return function(username, password)
 			log("Can't create user: \"" .. username .. "\" (" .. tostring(userID) .. "); code: " .. tostring(suc) .. "; " .. tostring(reason))
 		end
 	else
-		db:exec([[UPDATE sysinfo SET userCount = ]] .. tostring(userID) .. [[]])
+		suc = db:exec([[UPDATE sysinfo SET userCount = ]] .. tostring(userID) .. [[]])
 	end
 	
 	return suc, reason

@@ -4,10 +4,10 @@ local values = args[2]
 
 if type(dbTable) ~= "string" then
 	err("No table given")
-	return 1
+	return false
 elseif type(values) ~= "string" then
 	err("No value names given")
-	return 1
+	return false
 end
 
 env.userDB:exec([[SELECT ]] .. values .. [[, rowid FROM ]] .. dbTable .. [[]], function(udata, cols, values, names)	
@@ -30,4 +30,4 @@ env.userDB:exec([[SELECT ]] .. values .. [[, rowid FROM ]] .. dbTable .. [[]], f
 	return 0
 end)
 
-return 0
+return true

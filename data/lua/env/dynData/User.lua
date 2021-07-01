@@ -3,10 +3,10 @@ local User = {}
 function User.new(args)
 	local self = setmetatable({}, {__index = User})
 	
-	assert(type(args) == "table", "No valid args given")
 	
-	self.name = args.username 
-	self.id = 1 --ToDo: add database lookup based on username
+	
+	self.username = nil
+	self.id = nil
 	
 	self.loginToken = args.loginToken
 	

@@ -1,0 +1,20 @@
+-1: no valid username given.
+-2: no valind password given.
+
+-3: password not matching.
+
+-4: username not found.
+-5: user mail address not found.
+
+
+-101: username already taken.
+-102: mail address already taken.
+
+
+-201: no valid userID given.
+-202: user not found by userID.
+
+
+-301: multiple userers with same ID existing.
+-302: multiple userers with same username existing.
+-303: multiple userers with same mail address existing.
