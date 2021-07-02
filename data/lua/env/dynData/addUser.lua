@@ -34,7 +34,7 @@ return function(username, password)
 	if createUser then
 		log("Create userDB entry: username: \"" .. username .. "\", ID: " .. tostring(userID) .. "")
 		
-		suc = db:exec([[INSERT INTO users VALUES ("]] .. username .. [[", "]] .. env.hashPassword(password) .. [[", ]] .. tostring(userID) .. [[)]])
+		suc = db:exec([[INSERT INTO users VALUES ("]] .. username .. [[", "]] .. password .. [[", ]] .. tostring(userID) .. [[)]])
 	end
 	
 	if createUser ~= true or suc ~= 0 then

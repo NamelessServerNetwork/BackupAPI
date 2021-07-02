@@ -69,6 +69,10 @@ env.dl.load({ --legacy
 	execute = true,
 })
 
+for i, c in pairs(env._G) do
+	_G[i] = c
+end
+
 --env.dl.loadDir("lua/env/dynData/test", {}, "dynData")
 
 --=== enable logs again ===--
