@@ -22,9 +22,9 @@ dlog("Create users table: " .. tostring(db:exec([[
 
 dlog("Create permissions table: " .. tostring(db:exec([[
 	CREATE TABLE permissions (
+		userID INTEGER NOT NULL,
 		permission TEXT NOT NULL,
-		userID TEXT NOT NULL,
-		value INTEGER NOT NULL
+		level INTEGER NOT NULL
 	);
 ]])))
 

@@ -6,6 +6,8 @@
 -4: username not found.
 -5: user mail address not found.
 
+-11: cant set permission.
+
 
 -101: username already taken.
 -102: mail address already taken.
