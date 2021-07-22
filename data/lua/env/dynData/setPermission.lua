@@ -5,7 +5,7 @@ return function(user, perm, level)
 	
 	local permSetAlready, permLevelError = env.getPermissionLevel(user, perm)
 	
-	if permSetAlready then
+	if permSetAlready == true then
 		dlog("Update permission: " .. perm .. ", userID: " .. tostring(userID) .. ", to level: " .. tostring(level))
 		suc = db:exec([[UPDATE permissions SET level = "]] .. tostring(level) .. [[" WHERE permission = "]] .. perm .. [[" AND userID = ]] .. tostring(userID))
 	elseif permSetAlready == false then
@@ -13,7 +13,7 @@ return function(user, perm, level)
 		suc = db:exec([[INSERT INTO permissions VALUES ("]] .. tostring(userID) .. [[", "]] .. perm .. [[", ]] .. tostring(level) .. [[)]])
 	else
 		err("Cant set permission: " .. tostring(permSetAlready) .. " (" .. permLevelError .. ")")
-		suc, reason = -11, permLevelError
+		suc, reason = -11, tostring(permSetAlready) .. " (" ..  tostring(permLevelError) .. ")"
 	end
 	
 	return suc, reason
