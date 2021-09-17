@@ -1,4 +1,4 @@
-local run = false --debug
+local run = true --debug
 if not run then return true end
 run = nil
 

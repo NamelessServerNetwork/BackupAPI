@@ -1,3 +1,5 @@
 #!/bin/sh
 
-./data/bin/love ./data $@
+#./data/bin/love ./data $@
+
+love ./data $@

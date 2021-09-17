@@ -10,14 +10,14 @@ local utf8 = require("utf8")
 local thread = require("love.thread")
 
 --===== set constants =====--
-local terminalSizeRefreshTime = 1
+local terminalSizeRefreshTime = env.devConf.terminalSizeRefreshDelay
 
 local ansi = constants.ansi
 local keyTable = constants.keyTable
 
 --===== set local variables =====--
 local writeCursorPos = 1
-local terminalLength, terminalHeight = 115, 70
+local terminalLength, terminalHeight = 80, 25
 local previusTerminalSizeRefreshTime = 0
 local drawNeeded = true
 
@@ -34,14 +34,25 @@ end
 
 local function getTerminalSize()
 	local timeSeconds = os.time(os.date("*t"))
-	--ToDo: needs to be fixed
-	--[[
+	local newTerminalHeight = io.popen("tput lines"):read("*a")
+	local newTerminalLength = io.popen("tput cols"):read("*a")
+
 	if previusTerminalSizeRefreshTime + terminalSizeRefreshTime < timeSeconds then
-		_, _, terminalLength = os.execute("return $(tput cols)")
-		_, _, terminalHeight = os.execute("return $(tput lines)")
+		if tonumber(newTerminalHeight) == nil then
+			warn("Cant get current terminal height.")
+			warn(newTerminalHeight)
+		else
+			terminalHeight = tonumber(newTerminalHeight)
+		end
+		if tonumber(newTerminalLength) == nil then
+			warn("Cant get current terminal length.")
+			warn(newTerminalLength)
+		else
+			terminalLength = tonumber(newTerminalLength)
+		end
+
 		previusTerminalSizeRefreshTime = timeSeconds
 	end
-	]]
 	
 	return terminalLength, terminalHeight
 end
@@ -135,7 +146,7 @@ end
 --===== main functions =====--
 function terminal.update()
 	local code, action = get_mbs(getch.non_blocking, keyTable)
-	
+
 	if code ~= nil then
 		if env.devConf.debug.logInputEvent then
 			print(action)

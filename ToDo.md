@@ -1,4 +1,6 @@
-
+# setup
+## installer
+installer that uses luarocks and git to build the libraries and buts it into the local lib folder.
 
 # Performance  
 ## Buffer thread
