@@ -1,4 +1,4 @@
-return function()
+return function(self)
 	local userData = {}
 	for i, v in pairs(self) do
 		if type(v) ~= "function" then

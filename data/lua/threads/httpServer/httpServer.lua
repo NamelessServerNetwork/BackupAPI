@@ -47,10 +47,6 @@ local myserver = http_server.listen({
 
 dlog("Set server to listen")
 myserver:listen()
-do
-	local bound_port = select(3, myserver:localname())
-	dlog("Now listening on port " .. tostring(bound_port))
-end
 
 if env.isDevMode() then
 	dlog("Set event listeners")
@@ -64,6 +60,11 @@ if env.isDevMode() then
 			log("Sucsesfully reloaded HTTP server callback")
 		end
 	end)
+end
+
+do
+	local bound_port = select(3, myserver:localname())
+	log("Now listening on port " .. tostring(bound_port))
 end
 
 log("HTTP server initialization done")

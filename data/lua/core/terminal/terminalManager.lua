@@ -15,6 +15,9 @@ function terminal.setTerminal(t, prefix)
 	terminal.currentTerminal = t
 	terminal.currentTerminalPrefix = prefix or ""
 end
+function terminal.getTerminal()
+	return terminal.currentTerminal, terminal.currentTerminalPrefix
+end
 
 function terminal.input(input) 
 	local command, args = "", {}

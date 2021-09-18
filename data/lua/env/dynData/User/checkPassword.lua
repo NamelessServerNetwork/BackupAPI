@@ -12,7 +12,7 @@ return function(self, loginPassword)
 		return false, -2, "No valid password given"
 	end
 	
-	dlog("Try to login with userID: \"" .. userID .. "\"")
+	--dlog("Try to login with userID: \"" .. userID .. "\"")
 	
 	--check user existance.
 	errCode = db:exec([[SELECT username, password FROM users WHERE id = "]] .. tostring(userID) .. [["]], function(udata, cols, values, names)
@@ -34,8 +34,10 @@ return function(self, loginPassword)
 	else
 		if userExists then
 			if userPassword == loginPassword then
+				log("User (" .. userID .. ") logged in.")
 				return true
 			else
+				log("User (" .. userID .. ") tryed to login with wrong password!")
 				return false, -3, "No password not matching."
 			end
 		else

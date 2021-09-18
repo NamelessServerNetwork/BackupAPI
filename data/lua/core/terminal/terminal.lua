@@ -163,7 +163,7 @@ function terminal.update()
 				env.event.push(event, actionFragments)
 			end
 		end
-			
+
 		if action == "RELOAD_CORE" then
 			loadfile("lua/core/reload.lua")(env, shared)
 		elseif action == "RELOAD_USER" then
@@ -178,6 +178,21 @@ function terminal.update()
 				name = "commands",
 				overwrite = true,
 			})
+		elseif action == "tab" then	
+			if env.terminal.getTerminal() == nil then
+				local autoComp = {}
+
+				for i, _ in pairs(env.commands) do
+					table.insert(autoComp, i)
+				end
+				if #autoComp == 1 then
+					textBox.autoCompBase = autoComp[1]
+					lastAutoCompBase = textBox.autoCompBase
+				end
+				textBox.autoComplete = autoComp
+			end
+
+			textBox:update(terminalLength, code, action)
 		else
 			textBox:update(terminalLength, code, action)
 		end
