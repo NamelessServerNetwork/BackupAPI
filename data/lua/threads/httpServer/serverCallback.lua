@@ -1,6 +1,7 @@
 local http_headers = require "http.headers"
 
 local openStreams = {}
+local _
 
 local function callback(myserver, stream)
 	log("Got user request from: ")	
@@ -9,16 +10,19 @@ local function callback(myserver, stream)
 	local callbackStream, callbackData
 	
 	local req_headers = assert(stream:get_headers())
-	local headers = {}
+	local requestData, headers = {}, {}
 	
 	--=== init ===--
 	ldlog("Load headers")
 	for i, c in req_headers:each() do
 		headers[i] = c
 	end
+
+	requestData.headers = headers
+	requestData.body = stream:get_body_as_string()
 	
 	ldlog("Start callback thread")
-	local _, thr, id = env.startFileThread("lua/threads/httpServer/callbackThread.lua", "HTTP_CALLBACK", headers)
+	local _, thr, id = env.startFileThread("lua/threads/httpServer/callbackThread.lua", "HTTP_CALLBACK", requestData)
 	callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring(id))
 	
 	--=== wait for callback thread to stop ===--

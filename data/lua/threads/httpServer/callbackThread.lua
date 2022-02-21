@@ -5,21 +5,32 @@ local callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring
 local resHeaders = {}
 local resData = {}
 
-local request = env.initData.args
+local requestData = env.initData.args
 
 local function executeUserOrder()
-	local func, err
-	local action = request.action
+	local func, err, requestedAction
+		
+	local _, request = env.lib.serialization.load(requestData.body)
+
+	if type(request) ~= "table" then
+		warn("Recieved invalid request: " .. request)
+		resData.success = "false"
+		resData.error = "Invalid request format."
+		return false
+	else
+		requestData.request = request
+		requestedAction = request.action
+	end
 	
-	if action ~= nil then
-		func, err = loadfile("userActions/" .. action .. ".lua")
+	if requestedAction ~= nil then
+		func, err = loadfile("/userData/actions/" .. requestedAction .. ".lua")
 	end
 	
 	if func ~= nil then
-		resData.returnValue = func(env, shared, request)
+		resData.returnValue = func(env, shared, requestData)
 		resData.success = "true"
 	else
-		warn("Recieved unknown user action request: " .. tostring(action))
+		warn("Recieved unknown user action request: " .. tostring(requestedAction))
 		resData.success = "false"
 		resData.error = "Invalid user action"
 	end
