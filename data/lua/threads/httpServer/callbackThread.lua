@@ -58,13 +58,14 @@ local function loadFormatter(headerName, path)
 
 		if type(formatter) ~= "function" then
 			if env.lib.fs.getInfo(loveFSCompatiblePathString) == nil then --only generates a easyer to understand error msg if the formatter is not existing.
-				resData.error = "Invalid " .. headerName .. ": " .. requestedFormatter
+				resData.error = "Requestet " .. headerName .. " not found (" .. requestedFormatter .. ")"
+				resData.scriptError = err
 				canExecuteUserOrder = false
 				return 1, headerName .. " not found"
 			end
 
 			warn("Can't load requestet " .. headerName .. ": ".. requestedFormatter .. ", error: " .. err)
-			resData.error = "Can't load requestet " .. headerName
+			resData.error = "Can't load requestet " .. headerName .. " (" .. requestedFormatter .. ")"
 			resData.scriptError = err
 			canExecuteUserOrder = false
 			return 2, err
