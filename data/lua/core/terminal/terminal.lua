@@ -34,10 +34,21 @@ end
 
 local function getTerminalSize()
 	local timeSeconds = os.time(os.date("*t"))
-	local newTerminalHeight = io.popen("tput lines"):read("*a")
-	local newTerminalLength = io.popen("tput cols"):read("*a")
+	
+	local tputLinesHandler, tputColsHandler
+	local newTerminalHeight, newTerminalLength
 
 	if previusTerminalSizeRefreshTime + terminalSizeRefreshTime < timeSeconds then
+		tputLinesHandler = io.popen("tput lines")
+		tputColsHandler = io.popen("tput cols")
+		
+		if tputColsHandler == nil or tputLinesHandler == nil then
+			warn("Can't read terminal size! This can result in a broken terminal.")
+		else
+			newTerminalHeight = tputLinesHandler:read("*a")
+			newTerminalLength = tputColsHandler:read("*a")
+		end
+
 		if tonumber(newTerminalHeight) == nil then
 			warn("Cant get current terminal height.")
 			warn(newTerminalHeight)

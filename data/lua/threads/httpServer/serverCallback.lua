@@ -11,20 +11,23 @@ local function callback(myserver, stream)
 	
 	local req_headers = assert(stream:get_headers())
 	local requestData, headers = {}, {}
-	
+
 	--=== init ===--
 	ldlog("Load headers")
-	for i, c in req_headers:each() do
-		headers[i] = c
+	for index, value, neverIndex in req_headers:each() do
+		headers[index] = {
+			value = value, 
+			neverIndex = neverIndex,
+		}
 	end
 
 	requestData.headers = headers
 	requestData.body = stream:get_body_as_string()
-	
+
 	ldlog("Start callback thread")
-	local _, thr, id = env.startFileThread("lua/threads/httpServer/callbackThread.lua", "HTTP_CALLBACK", requestData)
+	local _, thr, id = env.startFileThread("lua/threads/httpServer/callbackThread.lua", "HTTP_CALLBACK_THREAD", requestData)
 	callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring(id))
-	
+
 	--=== wait for callback thread to stop ===--
 	ldlog("Wait for callback thread to stop")
 	while thr:isRunning() do env.cqueues.sleep(.1) end
@@ -44,7 +47,8 @@ local function callback(myserver, stream)
 	
 	--=== send data ===--
 	ldlog("Sending data")
-	stream:write_chunk(env.serialization.dump(callbackData.data))
+	--stream:write_chunk(env.serialization.dump(callbackData.data)) --not needed anymore soon.
+	stream:write_chunk(callbackData.data)
 	stream:write_chunk("", true)
 end
 

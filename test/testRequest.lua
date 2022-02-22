@@ -15,6 +15,13 @@ local connection = httpClient.connect({
 local requestHandler = httpRequest.new_from_uri("http://127.0.0.1:8023")
 
 requestHandler:set_body("{action = 'test1', newValue = 7}")
+--requestHandler:set_body("do local _={action = 'test1', newValue = 7};return _; end")
+requestHandler.headers:append("request-format", "lua-table")
+--requestHandler.headers:append("response-format", "lua-table")
+requestHandler.headers:append("response-format", "readable-lua-table")
+
+--print(ut.tostring(requestHandler.headers))
+
 
 local headers, stream = requestHandler:go()
 

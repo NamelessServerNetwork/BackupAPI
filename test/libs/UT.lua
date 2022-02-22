@@ -18,7 +18,11 @@
 --[[UsefullThings libary
 	
 ]]
-local UT = {version = "v0.8d"}
+local UT = {version = "v0.8.4"}
+
+function UT.getVersion()
+	return UT.version
+end
 
 function UT.parseArgs(...) --returns the first non nil parameter.
 	for _, a in pairs({...}) do
@@ -133,12 +137,20 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 				end
 			elseif "number" == type(key) then
 				table.insert(sb, string.format("[%s] = ", tostring(key)))
-				table.insert(sb, string.format("\"%s\"," .. lbString, tostring(value)))
+				if type(value) ~= "boolean" then
+					table.insert(sb, string.format("\"%s\"," .. lbString, tostring(value)))
+				else
+					table.insert(sb, string.format("%s," .. lbString, tostring(value)))
+				end
 			else
 				if sb[#sb] == "}," then
 					table.insert(sb, " ")
 				end
-				table.insert(sb, string.format("%s = \"%s\"," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))
+				if type(value) ~= "boolean" then
+					table.insert(sb, string.format("%s = \"%s\"," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))
+				else
+					table.insert(sb, string.format("%s = %s," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))
+				end
 			end
 		end
 		if not internalRun then

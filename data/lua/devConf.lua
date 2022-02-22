@@ -9,6 +9,11 @@ local devConf = {
 	terminalSizeRefreshDelay = 1,
 
 	devMode = true,
+
+	http = {
+		defaultRequestFormat = "lua-table",
+		defaultResponseFormat = "lua-table",
+	},
 	
 	terminal = {
 		commands = {
@@ -35,7 +40,7 @@ local devConf = {
 		
 		logLevel = {
 			debug = true,
-			lowLevelDebug = false,
+			lowLevelDebug = true,
 			threadDebug = false,
 			threadEnvInit = false,
 			eventDebug = false,

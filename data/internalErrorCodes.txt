@@ -20,3 +20,11 @@
 -301: multiple userers with same ID existing.
 -302: multiple userers with same username existing.
 -303: multiple userers with same mail address existing.
+
+
+
+-1001: no valid request-format given.
+-1002: no valid response-format given.
+-1011: request-formatter returned an error.
+-1012: response-formatter returned an error.
+
