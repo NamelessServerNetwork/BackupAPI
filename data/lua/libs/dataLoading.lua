@@ -9,7 +9,8 @@ local defaultFileCode = [[local env, shared = ...;]]
 local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, priorityOrder, loadFunc, executeFiles)
 	local path = dir .. "/" --= env.shell.getWorkingDirectory() .. "/" .. dir .. "/"
 	logFuncs = logFuncs or {}
-	local print = logFuncs.log or dlog
+	--local print = logFuncs.log or dlog
+	local print = logFuncs.log or debug.dataLoadingLog
 	local warn = logFuncs.warn or warn
 	local onError = logFuncs.error or err
 	local loadedFiles = 0
@@ -52,7 +53,7 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 				else
 					--suc, err = loadfile(path .. file)
 					local fileCode, fileErr = env.ut.readFile("data/" .. path .. file)
-					print(path .. file)
+					--print(path .. file)
 					if fileCode == nil then
 						suc, err = nil, fileErr
 					else
@@ -94,7 +95,7 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 					warn("Failed to load file: " .. dir .. "/" .. file .. ": " .. tostring(err))
 				else
 					loadedFiles = loadedFiles +1
-					ldlog(debugString .. tostring(suc))
+					debug.lowDataLoadingLog(debugString .. tostring(suc))
 				end
 			end
 		end
@@ -114,26 +115,26 @@ local function load(args)
 	
 	local loadedFiles, failedFiles = 0, 0
 	
-	dlog("Loading: " .. name .. " (" .. dir .. ")")
+	debug.dataLoadingLog("Loading dir: " .. dir .. " (" .. name .. ")")
 	loadedFiles, failedFiles = loadDir(target, dir, nil, overwrite, nil, structured, priorityOrder, loadFunc, executeFiles)
-	log("Successfully loaded " .. tostring(loadedFiles) .. " " .. name)
+	debug.dataLoadingLog("Successfully loaded files: " .. tostring(loadedFiles) .. " (" .. name .. ")")
 	if failedFiles > 0 then
-		warn("Failed to load " .. tostring(failedFiles) .. " " .. name)
+		warn("Failed to load " .. tostring(failedFiles) .. " (" .. name .. ")")
 	end
-	dlog("Loading done: " .. name .. " (" .. dir .. ")")
+	debug.dataLoadingLog("Loading dir done: " .. dir .. " (" .. name .. ")")
 	return target
 end
 
 local function execute(t, dir, name, callback, callbackArgs)
 	local executedFiles, failedFiles = 0, 0
 	
-	dlog("Execute: " .. name .. " (" .. dir .. ")")
+	debug.dataExecutionLog("Execute: " .. dir .. " (" .. name .. ")")
 	
 	for order = 0, 100 do
 		local scripts = t[order]
 		if scripts ~= nil then
 			for name, func in pairs(scripts) do
-				ldlog("Execute: " .. name .. " (" .. tostring(func) .. ")")
+				debug.lowDataExecutionLog("Execute: " .. name .. " (" .. tostring(func) .. ")")
 				local suc, err = xpcall(func, debug.traceback, env, shared)
 				
 				if suc == false then
@@ -153,9 +154,9 @@ local function execute(t, dir, name, callback, callbackArgs)
 	return executedFiles, failedFiles
 end
 
-local function loadDir(dir, target, name)
+local function loadDir(dir, target, name) --is this user or even done?
 	name = name or ""
-	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
+	debug.dataLoadingLog("Prepare loadDir execution: " .. name .. " (" .. dir .. ")")
 	local scripts = load({
 		target = {}, 
 		dir = dir, 
@@ -208,7 +209,7 @@ end
 
 local function executeDir(dir, name)
 	name = name or ""
-	dlog("Prepare execution: " .. name .. " (" .. dir .. ")")
+	debug.dataExecutionLog("Prepare executeDir execution: " .. name .. " (" .. dir .. ")")
 	local scripts = load({
 		target = {}, 
 		dir = dir, 
@@ -217,12 +218,12 @@ local function executeDir(dir, name)
 	})
 	
 	local executedFiles, failedFiles = execute(scripts, dir, name)
-	
-	log("Successfully executed: " .. tostring(executedFiles) .. " " .. name)
+
+	debug.dataExecutionLog("Successfully executed: " .. tostring(executedFiles) .. " files (" .. name .. ")")
 	if failedFiles > 0 then
-		warn("Failed to executed: " .. tostring(failedFiles) .. " " .. name)
+		warn("Failed to executed: " .. tostring(failedFiles) .. " (" .. name .. ")")
 	end
-	dlog("Executing done: " .. name .. " (" .. dir .. ")")
+	debug.dataExecutionLog("Executing done: " .. name .. " (" .. dir .. ")")
 end
 
 local function setEnv(newEnv, newShared)

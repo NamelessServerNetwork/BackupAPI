@@ -25,13 +25,8 @@ package.cpath = devConf.cRequirePath .. ";" .. package.cpath
 env.debug = loadfile("data/lua/env/debug.lua")(devConf, tostring(_internal.threadName) .. "[ENV_INIT]")
 
 --=== disable env init logs for non main threads ===--
-local orgLog = env.debug.log
-local orgDlog = env.debug.dlog
-local orgLdlog = env.debug.ldlog
 if not env.mainThread and not env.devConf.debug.logLevel.threadEnvInit then
-	_G.log = function() end
-	_G.dlog = function() end
-	_G.ldlog = function() end
+	debug.setSilenceMode(true)
 end
 
 --=== set environment ===--
@@ -76,8 +71,6 @@ end
 --env.dl.loadDir("lua/env/dynData/test", {}, "dynData")
 
 --=== enable logs again ===--
-_G.log = orgLog
-_G.dlog = orgDlog
-_G.ldlog = orgLdlog
+debug.setSilenceMode(false)
 
 return env, env.shared

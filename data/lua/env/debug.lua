@@ -15,9 +15,18 @@ local debug = {
 	
 	debug = orgDebug,
 	orgDebug = orgDebug,
+
+	silenceMode = false,
 }
 
 --===== set basic log functions =====--
+local function getSilenceMode()
+	return debug.silenceMode
+end
+local function setSilenceMode(silence)
+	debug.silenceMode = silence
+end
+
 local function getDebugPrefix()
 	return debug.internal.debugPrefix
 end
@@ -112,8 +121,10 @@ local function clog(...) --clean log
 	for _, msg in pairs({...}) do
 		msgs = msgs .. tostring(msg) .. "  "
 	end
-	
-	print("[" .. os.date("%X") .. "]" .. getInternalPrefix() .. msgs)
+
+	if not debug.silenceMode then
+		print("[" .. os.date(env.devConf.dateFormat) .. "]" .. getInternalPrefix() .. msgs)
+	end
 	setInternalPrefix("")
 	return ...
 end
@@ -191,6 +202,12 @@ addDebugLogLevel("tdlog", "[THREAD_DEBUG]", "threadDebug", true)
 addDebugLogLevel("edlog", "[EVENT_DEBUG]", "eventDebug", true)
 addDebugLogLevel("ledlog", "[LOW_EVENT_DEBUG]", "lowLevelEventDebug", true)
 addDebugLogLevel("lowLevelSharingLog", "[LOW_SHARING_DEBUG]", "lowLevelSharingLog", false)
+addDebugLogLevel("requireLog", "[REQUIRE]", "require", false)
+addDebugLogLevel("loadfileLog", "[LOADFILE]", "loadfile", false)
+addDebugLogLevel("dataLoadingLog", "[DATA_LOADING]", "dataLoading", false)
+addDebugLogLevel("lowDataLoadingLog", "[LOW_DATA_LOADING]", "lowDataLoading", false)
+addDebugLogLevel("dataExecutionLog", "[DATA_EXECUTION]", "dataExecution", false)
+addDebugLogLevel("lowDataExecutionLog", "[LOW_DATA_EXECUTION]", "lowDataExecution", false)
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)
@@ -201,6 +218,9 @@ debug.log = log
 debug.warn = warn
 debug.err = err
 debug.fatal = fatal
+
+debug.setSilenceMode = setSilenceMode
+debug.getSilenceMode = getSilenceMode
 
 debug.setLogPrefix = setLogPrefix
 debug.getLogPrefix = getLogPrefix

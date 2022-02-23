@@ -42,14 +42,14 @@ end
 
 local function require(p)
 	debug.setFuncPrefix("[REQUIRE]")
-	ldlog(tostring(p))
+	env.debug.requireLog(tostring(p))
 	return orgRequire(p)
 end
 
 local function loadfile(p)
 	local func, err
 	debug.setFuncPrefix("[LOADFILE]")
-	ldlog(tostring(p))
+	env.debug.loadfileLog(tostring(p))
 	func, err = orgLoadfile("data/" .. p)
 	if func == nil then
 		debug.err(func, err)

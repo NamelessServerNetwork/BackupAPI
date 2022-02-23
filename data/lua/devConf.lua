@@ -10,6 +10,9 @@ local devConf = {
 
 	devMode = true,
 
+	dateFormat = "%X",
+	--dateFormat = "%Y-%m-%d-%H-%M-%S",
+
 	http = {
 		defaultRequestFormat = "lua-table",
 		defaultResponseFormat = "lua-table",
@@ -41,11 +44,19 @@ local devConf = {
 		logLevel = {
 			debug = true,
 			lowLevelDebug = true,
-			threadDebug = false,
-			threadEnvInit = false,
-			eventDebug = false,
-			lowLevelEventDebug = false,
-			lowLevelSharingLog = false,
+			threadDebug = true,
+			threadEnvInit = false, --print env init debug from every thread.
+			eventDebug = true,
+			lowLevelEventDebug = true,
+			lowLevelSharingLog = true,
+
+			require = false,
+			loadfile = false,
+
+			dataLoading = false, --dyn data loading debug.
+			dataExecution = false, --dyn data execution debug.
+			lowDataLoading = false, --low level dyn data loading debug.
+			lowDataExecution = false, --low dyn data execution debug.
 		},
 	},
 }

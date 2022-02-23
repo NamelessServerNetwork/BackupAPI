@@ -40,7 +40,7 @@ function terminal.input(input)
 	else
 		debug.setFuncPrefix("[MAIN_TERMINAL]", true, true)
 	end
-	
+
 	plog("> " .. tostring(input))
 	
 	if terminal.currentTerminal ~= nil and not callMainTerminal then

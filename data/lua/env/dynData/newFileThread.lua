@@ -10,7 +10,7 @@ return function(dir, name, args)
 	local threadCode = env.getThreadInitCode(file:read("*all"), {name = name, id = threadID, args = args})
 	file:close()
 	
-	ldlog("Load thread from file")
+	ldlog("Load thread " .. name .. " from file: " .. dir)
 	
 	if type(file) == "userdata" then
 		local thread
