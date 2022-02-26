@@ -1,3 +1,9 @@
+--[[BUG: multi layer tables not working properly 
+	shared.t1.t2 = {}
+	shared.t2 = "T"
+	shared.t1.t2 == "T"
+]]
+
 local env = ...
 
 local shared = {

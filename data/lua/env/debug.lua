@@ -116,14 +116,17 @@ local function setLogPrefix(prefix, keepPrevious)
 end
 
 local function clog(...) --clean log
-	local msgs = ""
+	local msgs, msgString = "", ""
 	
 	for _, msg in pairs({...}) do
 		msgs = msgs .. tostring(msg) .. "  "
 	end
 
+	msgString = "[" .. os.date(env.devConf.dateFormat) .. "]" .. getInternalPrefix() .. msgs
+
 	if not debug.silenceMode then
-		print("[" .. os.date(env.devConf.dateFormat) .. "]" .. getInternalPrefix() .. msgs)
+		--print(env.mainThread, env.terminal, env.initData.logfile, msgString)
+		print(msgString)
 	end
 	setInternalPrefix("")
 	return ...

@@ -47,6 +47,7 @@ function terminal.input(input)
 		terminal.currentTerminal.input(input, command, args)
 	elseif env.commands[command] ~= nil then
 		local suc, err = xpcall(env.commands[command], debug.traceback, env, args)
+		--local suc, err = env.startFileThread("userData/commands/" .. command .. ".lua", "[COMMAND_THREAD][" .. command .. "]") --terminal.setTerminal is not working this way.
 		
 		plog(suc, err)
 	elseif command ~= "" then

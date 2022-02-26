@@ -38,17 +38,19 @@ local devConf = {
 	},
 	
 	debug = {
+		logfile = "./logs/dams.log",
+
 		logDirectInput = false,
 		logInputEvent = false,
 		
 		logLevel = {
 			debug = true,
-			lowLevelDebug = true,
-			threadDebug = true,
+			lowLevelDebug = false,
+			threadDebug = false,
 			threadEnvInit = false, --print env init debug from every thread.
-			eventDebug = true,
-			lowLevelEventDebug = true,
-			lowLevelSharingLog = true,
+			eventDebug = false,
+			lowLevelEventDebug = false,
+			lowLevelSharingLog = false,
 
 			require = false,
 			loadfile = false,

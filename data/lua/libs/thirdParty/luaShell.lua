@@ -117,18 +117,21 @@ local function readHandler(line, index)
 end
 
 env.env = global
+--[[
 env.print = function(...)
 	local s = "[LUA]: " .. tostring(...)
+
 	global.print(s)
 end
+]]
 
 local function textInput(text)
   --global.log(env._PROMPT)
   
   if text == "exit" or text == "quit" then
-	plog("Exitting LUA terminal")
-	env.env.terminal.setTerminal()
-	return 0
+	  plog("Exitting LUA terminal")
+	  env.env.terminal.setTerminal()
+	  return 0
   end
   
   local command = text

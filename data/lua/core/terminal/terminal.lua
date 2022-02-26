@@ -95,8 +95,12 @@ local function write(...) --not used anymore! --io.write() replacement
 	for _, arg in pairs({...}) do
 		writeCursorPos = writeCursorPos + utf8.len(tostring(arg))
 	end
-	
+
 	w(getMsg(...))
+
+	env.debug.logfile:write(getMsg(...))
+	env.debug.logfile:flush()
+
 	resetCursor()
 end
 
@@ -106,6 +110,11 @@ local function print(...)
 	w(ansi.clearLine)
 	w(getMsg(...))
 	w("\n")
+
+	env.debug.logfile:write(getMsg(...))
+	env.debug.logfile:write("\n")
+	env.debug.logfile:flush()
+
 	writeCursorPos = 1 --used for write() / io.write()
 	resetCursor()
 end
@@ -143,7 +152,8 @@ local function draw(text, cursorPos)
 	w(ansi.clearLine)
 	w(text)
 	resetCursor()
-	io.flush()
+	--io.flush()
+	env.org.io.flush()
 end
 
 --===== initialisation =====--

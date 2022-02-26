@@ -14,7 +14,23 @@ local _internal = {
 setmetatable(env, {_internal = _internal})
 _G.env = env
 
---=== loadl devConf ===--
+if initData.mainThread == true then --makes the print funciton logging into the logfile until the terminal is initialized. wich then replaces the global print function and takes take about the logging.
+	local orgPrint = print
+
+	_G.print = function(...) --will be overwritten by terminal.lua.
+		local msgString = ""
+		orgPrint(...)
+	
+		for _, s in pairs({...}) do
+			msgString = msgString .. tostring(s) .. "  "
+		end
+
+		initData.logfile:write(msgString .. "\n")
+		initData.logfile:flush()
+	end
+end
+
+--=== load devConf ===--
 local devConf = loadfile("data/lua/devConf.lua")()
 env.devConf = devConf
 

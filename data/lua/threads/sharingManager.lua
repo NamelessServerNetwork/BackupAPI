@@ -20,8 +20,15 @@ local function update()
 			ldlog("GET request (CID: " .. tostring(request.id) .. "): " .. tostring(request.index))
 			responseChannels[request.id]:push(shared[request.index])
 		elseif request.request == "set" then
+
+
 			ldlog("SET request (CID: " .. tostring(request.id) .. "): " .. tostring(request.index) .. ": " .. tostring(request.value))
 			shared[request.index] = request.value
+
+			
+		elseif request.request == "dump_shared_table" then
+			ldlog("Dumping shared table")
+			log(env.lib.ut.tostring(shared))
 		end
 	end
 end

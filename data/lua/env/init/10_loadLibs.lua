@@ -17,6 +17,7 @@ env.lib.sqlite = require("lsqlite3complete")
 
 env.lib.fs = require("love.filesystem")
 env.lib.ut = require("UT")
+env.lib.lfs = require("lfs")
 
 
 
