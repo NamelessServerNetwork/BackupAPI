@@ -25,8 +25,10 @@ dlog("Set metatables")
 setmetatable(shared, {
 	__index = function(_, index)
 		ldlog("Get value: " .. tostring(index))
-		
+
 		local returnValue
+
+		--dlog(index)
 		
 		requestChannel:push({
 			request = "get",
@@ -36,15 +38,10 @@ setmetatable(shared, {
 		returnValue = responseChannel:demand()
 		
 		if type(returnValue) == "table" then --ToDo: add real multitable loockup
-			returnValue = setmetatable(returnValue, getmetatable(shared))
-			--[[returnValue = setmetatable(returnValue, {
-				currentIndex = index,
-				__index = function(_, index) 
-					getmetatable(shared).__index()
-				end
-			})]]
+			--returnValue = setmetatable(returnValue, getmetatable(shared))	
+			returnValue = setmetatable({}, getmetatable(shared))	
 		end
-		
+
 		return returnValue
 	end,
 	__newindex = function(_, index, value)

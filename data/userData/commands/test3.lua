@@ -1,5 +1,6 @@
 --local env = ...
 
+--[[
 print("TEST 3")
 
 print("ARGS: ", ...)
@@ -14,7 +15,7 @@ io.stdout:write("STDOUT")
 io.stderr:write("STDERR")
 
 io.flush()
-
+]]
 --print(env)
 
 --print(env.lib.ut.tostring(env))

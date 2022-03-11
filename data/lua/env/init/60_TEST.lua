@@ -1,5 +1,5 @@
 
-if env.mainThread or true then
+if env.mainThread and false then
     print(env.getThreadInfos().name)
 
     print("T1")

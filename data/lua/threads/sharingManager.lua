@@ -1,6 +1,14 @@
 log("Starting sharing manager")
 
-local shared = {test = "T1"} --all shared data
+local shared = {
+	test = "DEFAULT TEST VALUE",
+	t1 = {
+		t2 = {
+			test = "DEFAULT TEST VALUE",
+		},
+	},
+} --all shared data
+
 
 local responseChannels = {}
 
@@ -17,8 +25,12 @@ local function update()
 		end
 		
 		if request.request == "get" then
+
+			
 			ldlog("GET request (CID: " .. tostring(request.id) .. "): " .. tostring(request.index))
 			responseChannels[request.id]:push(shared[request.index])
+
+
 		elseif request.request == "set" then
 
 
@@ -26,9 +38,12 @@ local function update()
 			shared[request.index] = request.value
 
 			
-		elseif request.request == "dump_shared_table" then
+		elseif request.request == "dump" then
 			ldlog("Dumping shared table")
 			log(env.lib.ut.tostring(shared))
+		elseif request.request == "stop" then --debug
+			ldlog("Stop sharing manager")
+			env.stop()
 		end
 	end
 end

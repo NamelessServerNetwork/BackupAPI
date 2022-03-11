@@ -1,1 +1,0 @@
-env.startFileThread("lua/threads/test/sqlite/L/managerThread.lua", "SQLITE_TEST_MANAGER")
