@@ -1,26 +1,21 @@
-
---[[
-local channel = env.thread.getChannel("test1")
-
-while true do
-	
-	while channel:peek() ~= nil do
-		local v = channel:pop()
-		dlog(env.ut.tostring(v))
-		
-		if type(v) == "table" then
-			dlog(env.ut.tostring(getmetatable(v)))
-		end
-	end
-	
-	sleep(1)
-end
-]]
-
-sleep(1)
-
 log("--===== SHARED TEST THREAD#2 START ======--")
 
+env.event.listen("STT#2", function()
+    log("STT#2_test")
 
+	env.shared.t1.t2 = "second new value"
+	log("second new value is set")
+
+	log("STT#2_test_done")
+	env.event.push("SHARING_TEST_STOP")
+end)
+
+env.event.listen("SHARING_TEST_STOP", function()
+    log("STT#2_stop")
+    env.stop()
+end)
+
+env.thread.getChannel("SHARING_TEST_THREAD_INIT"):push(2)
 
 log("--===== SHARED TEST THREAD#2 END ======--")
+--env.stop()

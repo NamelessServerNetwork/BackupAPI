@@ -1,3 +1,7 @@
+--[[
+	default enevt DAMS is listening to.
+]]
+
 log("Starting event listener")
 
 dlog("Register all listeners")

@@ -45,6 +45,9 @@ return function(code, initData)
 				debug.fatal(suc, err)
 			end
 		end
+
+
+		
 	]]
 	
 	return newCode
