@@ -6,7 +6,7 @@ env.event.listen("sharedTest", function()
 	--restart sharing manager 
 	env.thread.getChannel("SHARED_REQUEST"):push({
 		request = "stop",
-		id = env.getThreadInfos().id,
+		threadID = env.getThreadInfos().id,
 	})
 	env.startFileThread("lua/threads/sharingManager.lua", "SHARING_MANAGER")
 

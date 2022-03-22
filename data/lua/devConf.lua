@@ -50,7 +50,7 @@ local devConf = {
 			threadEnvInit = false, --print env init debug from every thread.
 			eventDebug = false,
 			lowLevelEventDebug = false,
-			sharingDebug = false,
+			sharingDebug = true,
 			sharingThread = true,
 
 			require = false,

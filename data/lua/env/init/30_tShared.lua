@@ -9,25 +9,34 @@ local _internal = {
 
 local requestChannel = env.thread.getChannel("SHARED_REQUEST")
 local responseChannel = env.thread.getChannel("SHARED_RESPONSE#" .. tostring(_internal.channelID))
+local requestIDChannel = env.thread.getChannel("SHARED_CURRENT_REQUEST_ID")
 
 local ldlog = debug.sharingDebug
+
+function _internal.getRequestID()
+	local requestID = requestIDChannel:demand()
+	requestIDChannel:push(requestID +1)
+	return requestID
+end
 
 function _internal.generateIndexString(indexTable) --for debugging purpose
 	local indexString = ""
 	for _, index in ipairs(indexTable) do
 		indexString = indexString .. tostring(index) .. "."
 	end
+	indexString = string.sub(indexString, 1, -2) --remove dot at the end
 	return indexString
 end
 
 function _internal.index(sharedTable, index, internalRun)
-	if env.devConf.debug.logLevel.sharingDebug then  --double check to prevent string concatenating process if debug output is disabled.
-		ldlog("Get value: " .. _internal.generateIndexString(getmetatable(sharedTable).indexTable or {}) .. tostring(index))
-	end
-
 	local returnValue	
 	local metatable = getmetatable(sharedTable)
 	local newIndexTable = {}
+	local requestID = _internal.getRequestID()
+
+	if env.devConf.debug.logLevel.sharingDebug then  --double check to prevent string concatenating process if debug output is disabled.
+		ldlog("Get value: '" .. _internal.generateIndexString(getmetatable(sharedTable).indexTable or {}) .. "." .. tostring(index) .. "'; requestID: " .. tostring(requestID))
+	end
 
 	if metatable.indexTable ~= nil then
 		for _, i in ipairs(metatable.indexTable) do
@@ -41,7 +50,8 @@ function _internal.index(sharedTable, index, internalRun)
 	local function getValue()
 		requestChannel:push({
 			request = "get",
-			id = _internal.channelID,
+			threadID = _internal.channelID,
+			requestID = requestID,
 			indexTable = newIndexTable,
 		})
 		return responseChannel:demand()
@@ -68,14 +78,16 @@ end
 
 function _internal.newindex(sharedTable, index, value)
 	metatable = getmetatable(sharedTable)
+	local requestID = _internal.getRequestID()
 
 	if env.devConf.debug.logLevel.sharingDebug then  --double check to prevent string concatenating process if debug output is disabled.
-		ldlog("Set value: " .. _internal.generateIndexString(getmetatable(sharedTable).indexTable or {}) .. tostring(index))
+		ldlog("Set value: '" .. _internal.generateIndexString(getmetatable(sharedTable).indexTable or {}) .. "." .. tostring(index) .. "'; new value: " .. tostring(value) .. "; requestID: " .. tostring(requestID))
 	end
 
 	requestChannel:supply({
 		request = "set",
-		id = _internal.channelID,
+		threadID = _internal.channelID,
+		requestID = requestID,
 		indexTable = metatable.indexTable or {},
 		index = index,
 		value = value,
@@ -88,12 +100,23 @@ function _internal.call(sharedTable, ...)
 	local args = {...}
 	local order = args[1]
 	local responseTable, returnValue
+	local bypassLock
+	local requestID = _internal.getRequestID()
+
+	ldlog("Send call request: " .. order .. "; requestID: " .. tostring(requestID))
+
+	if order == "force_unlock" then
+		order = "unlock"
+		bypassLock = true
+	end
 
 	requestChannel:push({
 		request = "call",
-		id = _internal.channelID,
+		threadID = _internal.channelID,
+		requestID = requestID,
 		indexTable = getmetatable(sharedTable).indexTable,
 		order = order,
+		bypassLock = env.ut.parseArgs(bypassLock, _internal.bypassLock),
 	})
 
 	responseTable = responseChannel:demand()

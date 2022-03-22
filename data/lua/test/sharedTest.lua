@@ -12,7 +12,7 @@ local function wait(id, timeout)
 end
 
 --log(env.tostring(t2("lock")))
-local testThreads = 1
+local testThreads = 2
 for c = 0, testThreads -1 do
     local id = env.thread.getChannel("SHARING_TEST_THREAD_INIT"):demand()
     log("sharing test thread init #" .. tostring(id) .. " done")
@@ -21,18 +21,22 @@ end
 log("--=== Start test ===--")
 
 
-env.shared.t1.t2("lock")
+env.shared.t1.t2("lock") --working #1
+--env.shared.t1("lock") --not working #1
 
 env.event.push("STT#1")
 env.event.push("STT#2")
 wait(1, 1)
-wait(2, 1)
+--wait(2, 1)
+
+--env.shared.t1.t2 = "zero new value"
 
 log(env.shared.t1.t2)
 
 --env.shared.t1.t2("unlock")
 
 log(" Test done ")
+env.event.push("SHARING_TEST_STOP")
 
 --log("1:", t.t2)
 --log("2:", t.t2.test)
@@ -62,13 +66,13 @@ print(t1)
 if true then
     env.thread.getChannel("SHARED_REQUEST"):push({
         request = "dump_lockTable",
-        id = env.getThreadInfos().id,
+        threadID = env.getThreadInfos().id,
     })
 end
 
-if false then
+if true then
     env.thread.getChannel("SHARED_REQUEST"):push({
         request = "dump",
-        id = env.getThreadInfos().id,
+        threadID = env.getThreadInfos().id,
     })
 end
