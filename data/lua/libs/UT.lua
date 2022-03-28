@@ -18,7 +18,7 @@
 --[[UsefullThings libary
 	
 ]]
-local UT = {version = "v0.8.4"}
+local UT = {version = "v0.8.5"}
 
 function UT.getVersion()
 	return UT.version
@@ -137,7 +137,7 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 				end
 			elseif "number" == type(key) then
 				table.insert(sb, string.format("[%s] = ", tostring(key)))
-				if type(value) ~= "boolean" then
+				if type(value) ~= "boolean" and type(value) ~= "number" then
 					table.insert(sb, string.format("\"%s\"," .. lbString, tostring(value)))
 				else
 					table.insert(sb, string.format("%s," .. lbString, tostring(value)))
@@ -146,7 +146,7 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 				if sb[#sb] == "}," then
 					table.insert(sb, " ")
 				end
-				if type(value) ~= "boolean" then
+				if type(value) ~= "boolean" and type(value) ~= "number" then
 					table.insert(sb, string.format("%s = \"%s\"," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))
 				else
 					table.insert(sb, string.format("%s = %s," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))

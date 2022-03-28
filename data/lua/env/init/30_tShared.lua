@@ -25,6 +25,11 @@ function _internal.generateIndexString(indexTable) --for debugging purpose
 		indexString = indexString .. tostring(index) .. "."
 	end
 	indexString = string.sub(indexString, 1, -2) --remove dot at the end
+	--[[ --needed?
+	if string.sub(indexString, 0, 1) == "." then --remove dot at the beginning if present
+		indexString = string.sub(indexString, 2)
+	end
+	]]
 	return indexString
 end
 

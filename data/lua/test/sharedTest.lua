@@ -21,7 +21,7 @@ end
 log("--=== Start test ===--")
 
 
-env.shared.t1.t2("lock") --working #1
+env.shared.t1("lock") --working #1
 --env.shared.t1("lock") --not working #1
 
 env.event.push("STT#1")

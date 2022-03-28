@@ -9,7 +9,7 @@ env.event.listen("STT#2", function()
 	
 	--env.shared.t1.t2
 
-	log("second new value is set")
+	--log("second new value is set")
 
 
 	env.thread.getChannel("SHARING_TEST_THREAD_WAIT#2"):push(true)

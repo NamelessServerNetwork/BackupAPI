@@ -27,6 +27,8 @@ local devConf = {
 			autoComp = 9,
 			
 		},
+		movieLike = false, --just for the lulz :)
+		movieLikeDelay = .004,
 	},
 	
 	sqlite = {

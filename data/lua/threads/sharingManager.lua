@@ -1,3 +1,5 @@
+--BUG: subtables from a locked table are still writable.
+
 log("Starting sharing manager")
 
 local sharedData = {
@@ -46,8 +48,18 @@ end
 
 local function getLock(indexString)
 	for key, lock in pairs(lockTable.locks) do
-		if string.find(key, indexString) ~= nil then
-			return lock
+		local indexStringIterator = string.gmatch(indexString, "[^.]+") 
+		local keyStringIterator = string.gmatch(key, "[^.]+") 
+
+		while true do
+			local indexStringPart = indexStringIterator()
+			local keyStringPart = keyStringIterator()
+
+			if indexStringPart == nil or keyStringPart == nil then
+				return lock
+			elseif indexStringPart ~= keyStringPart then
+				break
+			end
 		end
 	end
 end
@@ -90,10 +102,14 @@ function _internal.execRequest(request)
 
 			responseChannels[request.threadID]:push(returnValue)
 		elseif request.request == "set" then
-			local indexString
+			local indexString = generateIndexString(request.indexTable) .. "." .. tostring(request.index)
 			local locked, lock
+
+			if string.sub(indexString, 0, 1) == "." then --remove dot at the beginning of the indexString if present
+				indexString = string.sub(indexString, 2)
+			end
+
 			if env.devConf.debug.logLevel.sharingThread then --double check to prevent string concatenating process if debug output is disabled.
-				indexString = generateIndexString(request.indexTable) .. "." .. tostring(request.index)
 				ldlog("SET request (CID: " .. tostring(request.threadID) .. "); index: " .. indexString .. "; new value: '" .. tostring(request.value) .. "' requestID: " .. tostring(request.requestID))
 			end
 

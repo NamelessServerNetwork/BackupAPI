@@ -96,7 +96,17 @@ local function write(...) --not used anymore! --io.write() replacement
 		writeCursorPos = writeCursorPos + utf8.len(tostring(arg))
 	end
 
-	w(getMsg(...))
+	if env.devConf.terminal.movieLike then --just for the lulz
+		for _, s in ipairs({...}) do 
+			for _, s2 in ipairs(env.lib.ut.getChars(tostring(s))) do
+				w(s2)
+				env.org.io.flush()
+				sleep(env.devConf.terminal.movieLikeDelay)
+			end
+		end
+	else
+		w(getMsg(...))
+	end
 
 	env.debug.logfile:write(getMsg(...))
 	env.debug.logfile:flush()
@@ -108,7 +118,17 @@ local function print(...)
 	local _, terminalHeight = getTerminalSize()
 	w(ansi.setCursor:format(terminalHeight, writeCursorPos))
 	w(ansi.clearLine)
-	w(getMsg(...))
+	if env.devConf.terminal.movieLike then --just for the lulz
+		for _, s in ipairs({...}) do 
+			for _, s2 in ipairs(env.lib.ut.getChars(tostring(s))) do
+				w(s2)
+				env.org.io.flush()
+				sleep(env.devConf.terminal.movieLikeDelay)
+			end
+		end
+	else
+		w(getMsg(...))
+	end
 	w("\n")
 
 	env.debug.logfile:write(getMsg(...))
