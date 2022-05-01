@@ -72,6 +72,9 @@ local function loadFormatter(headerName, path)
 		else
 			return formatter, requestedFormatter
 		end
+	else
+		canExecuteUserOrder = false
+		return 3, "No formatter specified"
 	end
 end
 	
@@ -84,6 +87,8 @@ do --formatting user request
 		resData.errorCode = -1001
 	elseif requestFormatter == 2 then
 		resData.errorCode = -1011
+	elseif requestFormatter == 3 then
+		resData.errorCode = -1005
 	end
 
 	responseFormatter, responseFormatterName = loadFormatter("response-format", responseFormatterPath)
@@ -91,6 +96,8 @@ do --formatting user request
 		resData.errorCode = -1002
 	elseif responseFormatter == 2 then
 		resData.errorCode = -1012
+	elseif responseFormatter == 3 then
+		resData.errorCode = -1006
 	end
 
 	if canExecuteUserOrder then
@@ -107,6 +114,8 @@ do --formatting user request
 			resData.scriptError = tostring(userRequest)
 			canExecuteUserOrder = false
 		end
+	else
+		resData.error = requestFormatterName
 	end
 end
 

@@ -14,6 +14,11 @@ local devConf = {
 	--dateFormat = "%Y-%m-%d-%H-%M-%S",
 
 	http = {
+		certPath = "cert/cert.pem",
+		privateKeyPath = "cert/privatekey.pem",
+
+		forceTLS = false,
+
 		defaultRequestFormat = "lua-table",
 		defaultResponseFormat = "lua-table",
 	},
@@ -52,8 +57,8 @@ local devConf = {
 			threadEnvInit = false, --print env init debug from every thread.
 			eventDebug = false,
 			lowLevelEventDebug = false,
-			sharingDebug = true,
-			sharingThread = true,
+			sharingDebug = false,
+			sharingThread = false,
 
 			require = false,
 			loadfile = false,

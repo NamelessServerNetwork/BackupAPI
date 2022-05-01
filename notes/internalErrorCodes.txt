@@ -25,6 +25,8 @@
 
 -1001: no valid request-format given.
 -1002: no valid response-format given.
+-1005: expectet request-format not specified.
+-1006: expectet response-format not specified.
 -1011: request-formatter returned an error.
 -1012: response-formatter returned an error.
 

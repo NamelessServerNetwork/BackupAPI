@@ -34,7 +34,8 @@ constants.keyTable = {
 				},
 				[56] = { --f7
 					--[126] = "EVENT_sqliteTest1_L",
-					[126] = "EVENT_sharedTest",
+					--[126] = "EVENT_sharedTest",
+					[126] = "EVENT_userTest",
 				},
 				[57] = { --f8
 					[126] = "EVENT_reloadHttpServerCallback",

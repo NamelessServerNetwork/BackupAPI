@@ -1,13 +1,20 @@
-local run = false --debug
+local run = true --debug
 if not run then return true end
 run = nil
 
 
 log("Initialize HTTP server")
 
-local http_server = require("http.server")
+local httpServer = require("http.server")
+local pkey = require("openssl.pkey")
+local x509 = require("openssl.x509")
 
 local port = 8023 -- 0 means pick one at random
+
+local ctx
+local cert = env.lib.ut.readFile(env.devConf.http.certPath)
+local privateKey = env.lib.ut.readFile(env.devConf.http.privateKeyPath)
+local forceTLS
 
 env.httpCQ = {lastID = 0}
 
@@ -29,8 +36,25 @@ local function getFunc(path)
 	return func
 end
 
+do --setup TLS by using given cert/privatekey.
+	if type(cert) == "string" and type(privateKey) == "string" then
+		dlog("Initialize certificate")
+		ctx = require("http.tls").new_server_context()
+		ctx:setCertificate(x509.new(cert))
+		ctx:setPrivateKey(pkey.new(privateKey))
+	else
+		warn("No valid TLS certificate given")
+	end
+
+	if env.devConf.forceTLS then
+		log("Force TLS on")
+		forceTLS = true
+	end
+end
+
+
 dlog("Create server object")
-local myserver = http_server.listen({
+local myserver = httpServer.listen({
 	--cq = env.httpCQ;
 	host = "0.0.0.0";
 	port = port;
@@ -43,6 +67,8 @@ local myserver = http_server.listen({
 		debug.err("HTTP SERVER ERROR:")
 		debug.err(msg, "\n")
 	end;
+	tls = forceTLS,
+	ctx = ctx,
 })
 
 dlog("Set server to listen")

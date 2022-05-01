@@ -1,4 +1,4 @@
-log("--===== SHARED CONTROL THREAD START ======--")
+log("--===== TEST EVENT LISTENER THREAD START ======--")
 
 env.event.listen("sharedTest", function()
 	log("--=== Shared test ===--")
@@ -22,9 +22,13 @@ env.event.listen("sharedTest", function()
 	
 end)
 
+env.event.listen("userTest", function()
+	loadfile("lua/test/userTest.lua")(env)
+end)
+
 while env.isRunning() and false do
 	--print(shared.testVal1)
 	sleep(1)
 end
 
-log("--===== SHARED CONTROL THREAD END ======--")
+log("--===== TEST EVENT LISTENER THREAD DONE ======--")
