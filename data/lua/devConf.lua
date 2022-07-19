@@ -16,8 +16,9 @@ local devConf = {
 	http = {
 		certPath = "cert/cert.pem",
 		privateKeyPath = "cert/privatekey.pem",
-
 		forceTLS = false,
+
+		startHTTPServer = true,
 
 		defaultRequestFormat = "lua-table",
 		defaultResponseFormat = "lua-table",
@@ -63,8 +64,8 @@ local devConf = {
 			require = false,
 			loadfile = false,
 
-			dataLoading = false, --dyn data loading debug.
-			dataExecution = false, --dyn data execution debug.
+			dataLoading = true, --dyn data loading debug.
+			dataExecution = true, --dyn data execution debug.
 			lowDataLoading = false, --low level dyn data loading debug.
 			lowDataExecution = false, --low dyn data execution debug.
 		},

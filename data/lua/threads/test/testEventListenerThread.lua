@@ -22,7 +22,11 @@ env.event.listen("sharedTest", function()
 	
 end)
 
-env.event.listen("userTest", function()
+env.event.listen("userTest", function(...)
+	for _, a in pairs({...}) do
+		print(a)
+	end
+
 	loadfile("lua/test/userTest.lua")(env)
 end)
 

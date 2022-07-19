@@ -22,6 +22,9 @@
 -303: multiple userers with same mail address existing.
 
 
+-404: site not found.
+-405: error while executing site script.
+
 
 -1001: no valid request-format given.
 -1002: no valid response-format given.
@@ -29,4 +32,6 @@
 -1006: expectet response-format not specified.
 -1011: request-formatter returned an error.
 -1012: response-formatter returned an error.
+-1013: request-formatter crashed.
+-1014: response-formatter crashed.
 

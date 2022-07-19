@@ -20,7 +20,7 @@ return function(code, initData)
 						suc, err = xpcall(update, debug.traceback)
 						
 						if suc ~= true then
-							debug.fatal(suc, err)
+							debug.err(suc, err)
 						end
 					end
 				else --only event handler
@@ -34,7 +34,7 @@ return function(code, initData)
 						local suc, err = xpcall(stop, debug.traceback)
 						
 						if suc ~= true then
-							debug.fatal(suc, err)
+							debug.err(suc, err)
 						end
 					end
 				end

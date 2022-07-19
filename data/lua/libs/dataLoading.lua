@@ -11,7 +11,8 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 	logFuncs = logFuncs or {}
 	--local print = logFuncs.log or dlog
 	local print = logFuncs.log or debug.dataLoadingLog
-	local warn = logFuncs.warn or warn
+	--local warn = logFuncs.warn or warn
+	local warn = logFuncs.warn or err
 	local onError = logFuncs.error or err
 	local loadedFiles = 0
 	local failedFiles = 0

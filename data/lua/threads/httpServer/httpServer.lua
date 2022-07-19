@@ -1,5 +1,4 @@
-local run = true --debug
-if not run then return true end
+if not env.devConf.http.startHTTPServer then return true end
 run = nil
 
 
@@ -43,7 +42,7 @@ do --setup TLS by using given cert/privatekey.
 		ctx:setCertificate(x509.new(cert))
 		ctx:setPrivateKey(pkey.new(privateKey))
 	else
-		warn("No valid TLS certificate given")
+		warn("No TLS certificate given. Falling back to self-signed certificate.")
 	end
 
 	if env.devConf.forceTLS then

@@ -159,8 +159,11 @@ local function warn(...)
 	return ...
 end
 local function err(...)
+	local silenceMode = debug.getSilenceMode()
+	debug.setSilenceMode(false)
 	setDebugPrefix("[ERROR]")
 	plog(...)
+	debug.setSilenceMode(true)
 	return ...
 end
 local function fatal(...)

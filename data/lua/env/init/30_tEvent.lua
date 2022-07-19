@@ -43,7 +43,6 @@ function event.ignoreAll(eventName)
 			for callback in pairs(_internal.listeners[eventName]) do
 				event.ignore(eventName, callback)
 			end
-			_internal.listeners[eventName] = nil
 		end
 	end
 	
