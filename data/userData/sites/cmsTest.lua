@@ -1,5 +1,8 @@
-local body = env.dyn.html.Body.new()
+local requestData = ...
 
+local tostring = env.lib.ut.tostring
+
+local body = env.dyn.html.Body.new()
 
 log(env.lib.ut.tostring(body.addRaw))
 
@@ -16,6 +19,8 @@ body:addAction("dumpRequest", "POST",
     {"hidden", name = "action" , value = "dumpRequest" },
     {"submit", value = "Do it! "},
 })
+
+body:addReturnButton("Return", requestData)
 
 
 return body:generateCode()

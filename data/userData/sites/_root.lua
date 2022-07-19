@@ -1,8 +1,13 @@
 local requestData = ...
 
-log("Default site")
+local body = env.dyn.html.Body.new()
 
+body:addHeader(2, "DAMS dev main page")
 
-print("REQ DATA:", env.lib.ut.tostring(requestData))
+body:addRefButton("test", "/test")
+body:addP("")
+body:addRefButton("CMS test 1", "/cmsTest")
+body:addP("")
+body:addAction("TEST", "POST", {{"submit", name = "dumpRequest"}, {"hidden", name="action", value="dumpRequest"}})
 
-return "Default site"
+return body:generateCode()

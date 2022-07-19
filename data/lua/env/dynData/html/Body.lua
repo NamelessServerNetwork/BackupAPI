@@ -49,10 +49,13 @@ function Body:addAction(link, method, actions)
     <textarea for="]]..action.name..[[" name="]]..action.name..[[">]]..action.value..[[</textarea>
 </div>
 ]]
-        elseif action[1] == "submit" then
+        elseif action[1] == "button" or action[1] == "submit" then
+            if action.value == nil then
+                action.value = action.name
+            end
             actionString = actionString .. [[
 <div>
-    <button type="submit">]]..action.value..[[</button>
+    <button type="]]..action[1]..[[">]]..action.value..[[</button>
 </div>
 ]]
         end
@@ -65,6 +68,28 @@ function Body:addHeader(level, text)
 <h]]..tostring(level)..[[>]]..tostring(text)..[[</h]]..tostring(level)..[[>
     ]])
 end
+
+function Body:addReturnButton(text, requestData)
+    log(requestData.headers.referer)
+    if requestData.headers.referer then
+        local referer = requestData.headers.referer.value 
+        table.insert(self.content, [[
+<a href="]]..referer..[[">  
+    <input type="button" value="]]..tostring(text)..[["/>  
+</a>     
+]])
+    else
+        table.insert(self.content, [[
+<p>(Return button error. Please contacs an admin.)</p>
+]])
+    end
+end
+
+function Body:addP(text)
+    table.insert(self.content, [[
+<p>]]..tostring(text)..[[</p>
+]])
+end 
 
 function Body:generateCode()
     local htmlCode = ""
