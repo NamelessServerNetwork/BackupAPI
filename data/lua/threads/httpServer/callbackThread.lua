@@ -35,7 +35,7 @@ local function executeUserOrder(request)
 	if func ~= nil then
 		local logPrefix = env.debug.getLogPrefix()
 		env.debug.setLogPrefix("[USER_ACTION]")
-		resData.returnValue = func(env, shared, requestData)
+		resData.returnValue = func(requestData)
 		resData.success = true
 		env.debug.setLogPrefix(logPrefix)
 	else
@@ -99,7 +99,7 @@ if requestData.headers[":method"].value == "GET" then
 			debug.err(suc, err)
 			resDataString = [[
 Site script crashed. Please contact a system administrator.
-Error:
+Stack traceback:
 ]] .. err
 		else
 			if err == nil then
@@ -159,9 +159,6 @@ else
 	end
 
 	if canExecuteUserOrder then
-
-		dlog(env.lib.ut.tostring(userRequestTable))
-
 		local suc, err = xpcall(executeUserOrder, debug.traceback, userRequestTable)
 		if suc ~= true then
 			debug.err(suc, err)

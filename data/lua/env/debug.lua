@@ -215,6 +215,7 @@ addDebugLogLevel("dataLoadingLog", "[DATA_LOADING]", "dataLoading", false)
 addDebugLogLevel("lowDataLoadingLog", "[LOW_DATA_LOADING]", "lowDataLoading", false)
 addDebugLogLevel("dataExecutionLog", "[DATA_EXECUTION]", "dataExecution", false)
 addDebugLogLevel("lowDataExecutionLog", "[LOW_DATA_EXECUTION]", "lowDataExecution", false)
+addDebugLogLevel("exec", "[EXEC]", "exec", false)
 
 --===== set debug function =====--
 setLogPrefix(defaultPrefix)

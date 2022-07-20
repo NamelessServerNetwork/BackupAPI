@@ -13,34 +13,40 @@ function Body.new()
 end
 
 function Body:addRaw(text)
-    table.insert(self.content, "\n" .. text .. "\n")
+    local html = "\n" .. text .. "\n"
+    table.insert(self.content, html)
+    return html
 end
 
 function Body:addRefButton(name, link)
-    table.insert(self.content, [[
+    local html = [[
 <a href="]]..link..[[">  
     <input type="button" value="]]..name..[["/>  
 </a> 
-]])
+]]
+    table.insert(self.content, html)
+    return html
 end
 
 function Body:addAction(link, method, actions)
     local actionString = [[<form action="]]..link..[[" method="]]..method..[[">]]
     for _, action in pairs(actions) do
         if action[1] == "input" then
+            local target = env.lib.ut.parseArgs(action.target, action.id, action.name)
             if action.type == nil then
                 action.type = "text"
             end
             actionString = actionString .. [[
 <div>
     <label for="]]..action.name..[[">]]..action.name..[[</label>
-    <input name="]]..action.name..[[" value="]]..action.value..[[">
+    <input name="]]..target..[[" value="]]..action.value..[[">
 </div>
 ]]
         elseif action[1] == "hidden" then
+            local target = env.lib.ut.parseArgs(action.target, action.id, action.name)
             actionString = actionString .. [[
 <div>
-    <input type="hidden" name="]]..action.name..[[" value="]]..action.value..[[">
+    <input type="hidden" name="]]..target..[[" value="]]..action.value..[[">
 </div>
 ]]
         elseif action[1] == "textarea" then
@@ -61,35 +67,65 @@ function Body:addAction(link, method, actions)
         end
     end
     table.insert(self.content, actionString)
+    return actionString
 end
 
 function Body:addHeader(level, text)
-    table.insert(self.content, [[
+    local html = [[
 <h]]..tostring(level)..[[>]]..tostring(text)..[[</h]]..tostring(level)..[[>
-    ]])
+    ]]
+    table.insert(self.content, html)
 end
 
 function Body:addReturnButton(text, requestData)
-    log(requestData.headers.referer)
-    if requestData.headers.referer then
+    local html 
+    if requestData.headers and requestData.headers.referer then
         local referer = requestData.headers.referer.value 
-        table.insert(self.content, [[
+        html = [[
 <a href="]]..referer..[[">  
     <input type="button" value="]]..tostring(text)..[["/>  
 </a>     
-]])
+]]
     else
-        table.insert(self.content, [[
-<p>(Return button error. Please contacs an admin.)</p>
-]])
+        html = [[
+<p>(Return button error. Please contact an admin.)</p>
+]]
     end
+    table.insert(self.content, html)
+    return html
 end
 
 function Body:addP(text)
-    table.insert(self.content, [[
+    local html = [[
 <p>]]..tostring(text)..[[</p>
-]])
+]]
+    table.insert(self.content, html)
+    return html
 end 
+
+function Body:goTo(link, delay)
+    local html = [[
+<meta http-equiv="Refresh" content="]]..tostring(delay or 0)..[[; url=']]..link..[['" />
+]]
+    table.insert(self.content, html)
+    return html
+end
+
+function Body:goBack(requestData, delay)
+    local html
+    if requestData.headers and requestData.headers.referer then
+        local referer = requestData.headers.referer.value 
+        html = [[
+<meta http-equiv="Refresh" content="]]..tostring(delay or 0)..[[; url=']]..referer..[['" />
+]]
+    else
+        html = [[
+<p>(Go back error. Please contact an admin.)</p>
+]]
+    end
+    table.insert(self.content, html)
+    return html
+end
 
 function Body:generateCode()
     local htmlCode = ""

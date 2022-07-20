@@ -68,6 +68,8 @@ local devConf = {
 			dataExecution = true, --dyn data execution debug.
 			lowDataLoading = false, --low level dyn data loading debug.
 			lowDataExecution = false, --low dyn data execution debug.
+
+			exec = true,
 		},
 	},
 }

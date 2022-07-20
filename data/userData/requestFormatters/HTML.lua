@@ -20,7 +20,11 @@ for s in string.gmatch(rawRequestData, "[^&]+") do
             value = s2
         end
     end
-    convertedTable[index] = unescape(string.gsub(value, "+", " "))
+    if value == nil then
+        convertedTable[index] = ""
+    else
+        convertedTable[index] = unescape(string.gsub(value, "+", " "))
+    end
 end
 
 return convertedTable
