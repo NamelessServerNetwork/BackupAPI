@@ -7,11 +7,11 @@ body:addP("Here you can change your password.")
 body:addP("Tip: do never use the same passwoed for multiple services.")
 
 body:addAction("", "POST", {
-    {"input", name = "Username:", target = "username", value = "testuser"},
-    {"input", name = "Current password:", target = "currentPasswd", value = "cp"},
-    {"input", name = "New password:", target = "newPasswd1", value = "np1"},
-    {"input", name = "Repeate password:", target = "newPasswd2", value = "np2"},
     {"hidden", target = "action", value = "changePasswd"},
+    {"input", name = "Username:", target = "username", value = "testuser"},
+    {"input", type = "password", name = "Current password:", target = "currentPasswd"},
+    {"input", type = "password", name = "New password:", target = "newPasswd1"},
+    {"input", type = "password", name = "Repeate password:", target = "newPasswd2"},
     {"submit", value = "Change password"},
 })
 

@@ -28,18 +28,36 @@ function Body:addRefButton(name, link)
     return html
 end
 
+function Body:addGoBackButton(name, requestData)
+    local html
+    if requestData.headers and requestData.headers.referer then
+        local referer = requestData.headers.referer.value 
+        html = [[
+<a href="]]..referer..[[">  
+    <input type="button" value="]]..name..[["/>  
+</a> 
+]]
+    else
+        html = [[
+<p>(Go back error. Please contact an admin.)</p>
+]]
+    end
+    table.insert(self.content, html)
+    return html
+end
+
 function Body:addAction(link, method, actions)
     local actionString = [[<form action="]]..link..[[" method="]]..method..[[">]]
     for _, action in pairs(actions) do
         if action[1] == "input" then
             local target = env.lib.ut.parseArgs(action.target, action.id, action.name)
-            if action.type == nil then
-                action.type = "text"
-            end
+            local type = env.lib.ut.parseArgs(action.type, "text")
+            local value = env.lib.ut.parseArgs(action.value, "")
+            local name = env.lib.ut.parseArgs(action.name, "")
             actionString = actionString .. [[
 <div>
-    <label for="]]..action.name..[[">]]..action.name..[[</label>
-    <input name="]]..target..[[" value="]]..action.value..[[">
+    <label for="]]..name..[[">]]..name..[[</label>
+    <input type="]]..type..[[" name="]]..target..[[" value="]]..value..[[">
 </div>
 ]]
         elseif action[1] == "hidden" then
@@ -56,12 +74,11 @@ function Body:addAction(link, method, actions)
 </div>
 ]]
         elseif action[1] == "button" or action[1] == "submit" then
-            if action.value == nil then
-                action.value = action.name
-            end
+            local type = env.lib.ut.parseArgs(action.type, action[1])
+            local value = env.lib.ut.parseArgs(action.value, action.name)
             actionString = actionString .. [[
 <div>
-    <button type="]]..action[1]..[[">]]..action.value..[[</button>
+    <button type="]]..type..[[">]]..value..[[</button>
 </div>
 ]]
         end

@@ -69,7 +69,7 @@ local devConf = {
 			lowDataLoading = false, --low level dyn data loading debug.
 			lowDataExecution = false, --low dyn data execution debug.
 
-			exec = true,
+			exec = false, --prints whats is executet in the shell. WARNING: if used wrong this can expose passwords in the logfile!
 		},
 	},
 }

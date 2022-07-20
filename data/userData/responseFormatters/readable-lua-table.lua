@@ -1,3 +1,7 @@
-local resData = ...
+local responseData = ...
 
-return true, env.lib.ut.tostring(resData)
+if responseData.returnValue and responseData.returnValue.html then
+    responseData.returnValue.html = nil
+end
+
+return env.lib.ut.tostring(responseData)

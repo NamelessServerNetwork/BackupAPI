@@ -3,8 +3,8 @@ ldlog("CALLBACK THREAD START")
 local callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring(env.getThreadInfos().id))
 
 local resHeaders = {}
-local resData = {success = false}
-local resDataString = "If you see this, something went terrebly wrong. Please contact a system administrator."
+local responseData = {success = false}
+local responseDataString = "If you see this, something went terrebly wrong. Please contact a system administrator."
 
 local requestData = env.initData.args
 
@@ -13,15 +13,14 @@ local requestFormatterName, responseFormatterName
 local requestFormatterPath, responseFormatterPath = "./userData/requestFormatters/", "./userData/responseFormatters/"
 
 local canExecuteUserOrder = true
-	
-local _, userRequestTable
+local userRequest
 
 local function executeUserOrder(request)
 	local func, err, requestedAction
 
 	if type(request) ~= "table" then
-		warn("Recieved invalid request: " .. request)
-		resData.error = "Invalid request format."
+		warn("Recieved invalid request: " .. tostring(request))
+		responseData.error = "Invalid request format."
 		return false
 	else
 		requestData.request = request
@@ -35,12 +34,12 @@ local function executeUserOrder(request)
 	if func ~= nil then
 		local logPrefix = env.debug.getLogPrefix()
 		env.debug.setLogPrefix("[USER_ACTION]")
-		resData.returnValue = func(requestData)
-		resData.success = true
+		responseData.returnValue = func(requestData)
+		responseData.success = true
 		env.debug.setLogPrefix(logPrefix)
 	else
 		warn("Recieved unknown user action request: " .. tostring(requestedAction))
-		resData.error = "Invalid user action"
+		responseData.error = "Invalid user action \n" .. err 
 	end
 end
 
@@ -58,15 +57,15 @@ local function loadFormatter(headerName, path)
 
 		if type(formatter) ~= "function" then
 			if env.lib.fs.getInfo(loveFSCompatiblePathString) == nil then --only generates a easyer to understand error msg if the formatter is not existing.
-				resData.error = "Requestet " .. headerName .. " not found (" .. requestedFormatter .. ")"
-				resData.scriptError = err
+				responseData.error = "Requestet " .. headerName .. " not found (" .. requestedFormatter .. ")"
+				responseData.scriptError = err
 				canExecuteUserOrder = false
 				return 1, headerName .. " not found"
 			end
 
 			warn("Can't load requestet " .. headerName .. ": ".. requestedFormatter .. ", error: " .. err)
-			resData.error = "Can't load requestet " .. headerName .. " (" .. requestedFormatter .. ")"
-			resData.scriptError = err
+			responseData.error = "Can't load requestet " .. headerName .. " (" .. requestedFormatter .. ")"
+			responseData.scriptError = err
 			canExecuteUserOrder = false
 			return 2, err
 		else
@@ -82,38 +81,10 @@ end
 --dlog(requestData.body)
 
 if requestData.headers[":method"].value == "GET" then
-	local sitePath = requestData.headers[":path"].value
-	local siteFunc
-	local suc, err
-
-	if sitePath == "/" then
-		sitePath = "_root"
-	end
-	sitePath = "userData/sites/" .. sitePath .. ".lua" --completing sitePath
-
-	if env.lib.lfs.attributes("data/" .. sitePath) ~= nil then
-		siteFunc = loadfile(sitePath)
-		suc, err = xpcall(siteFunc, debug.traceback, requestData)
-
-		if suc ~= true then
-			debug.err(suc, err)
-			resDataString = [[
-Site script crashed. Please contact a system administrator.
-Stack traceback:
-]] .. err
-		else
-			if err == nil then
-				err = ""
-			end
-			resDataString = err
-		end
-	else
-		warn("Someone tryed to access non existing site: '" .. requestData.headers[":path"].value .. "'")
-		resDataString = "Error 404\nSite not found"
-	end
+	_, responseDataString = env.dyn.execSite(requestData.headers[":path"].value, requestData)
 else
 	do --formatting user request
-		local suc, userRequest
+		local suc
 		local logPrefix
 
 		if requestData.headers[":method"].value == "POST" then
@@ -121,49 +92,51 @@ else
 			requestData.headers["response-format"] = {value = "HTML"}
 		end
 
+		--load request formatter
 		requestFormatter, requestFormatterName, errorCode = loadFormatter("request-format", requestFormatterPath)
 		if requestFormatter == 1 then
-			resData.errorCode = -1001
+			responseData.errorCode = -1001
 		elseif requestFormatter == 2 then
-			resData.errorCode = -1011
+			responseData.errorCode = -1011
 		elseif requestFormatter == 3 then
-			resData.errorCode = -1005
+			responseData.errorCode = -1005
 		end
 
+		--load response formatter
 		responseFormatter, responseFormatterName = loadFormatter("response-format", responseFormatterPath)
 		if responseFormatter == 1 then
-			resData.errorCode = -1002
+			responseData.errorCode = -1002
 		elseif responseFormatter == 2 then
-			resData.errorCode = -1012
+			responseData.errorCode = -1012
 		elseif responseFormatter == 3 then
-			resData.errorCode = -1006
+			responseData.errorCode = -1006
 		end
 
+		--format user request using loaded requst formatter
 		if canExecuteUserOrder then
 			logPrefix = debug.getLogPrefix()
 			debug.setLogPrefix("[REQUEST_FORMATTER][" .. requestFormatterName .. "]")
 			suc, userRequest = xpcall(requestFormatter, debug.traceback, requestData.body)
 			debug.setLogPrefix(logPrefix)
 
-			userRequestTable = userRequest
-
 			if suc ~= true then
 				warn("Failed to execute request formatter: " .. requestFormatterName .. "; " .. tostring(userRequest))
-				resData.error = "Request formatter returned an error."
-				resData.scriptError = tostring(userRequest)
+				responseData.error = "Request formatter returned an error."
+				responseData.scriptError = tostring(userRequest)
 				canExecuteUserOrder = false
 			end
 		else
-			resData.error = requestFormatterName
+			responseData.error = requestFormatterName
 		end
 	end
 
-	if canExecuteUserOrder then
-		local suc, err = xpcall(executeUserOrder, debug.traceback, userRequestTable)
+	--execute user order
+	if canExecuteUserOrder then 
+		local suc, err = xpcall(executeUserOrder, debug.traceback, userRequest)
 		if suc ~= true then
-			debug.err(suc, err)
-			resData.error = "User script crash"
-			resData.scriptError = tostring(err)
+			debug.err("Execute user order: ", suc, err)
+			responseData.error = "User script crash"
+			responseData.scriptError = tostring(err)
 		end
 	end
 
@@ -172,32 +145,32 @@ else
 			shared.requestCount = 0
 		end
 		shared.requestCount = shared.requestCount +1
-		resData.requestID = tostring(shared.requestCount)
+		responseData.requestID = tostring(shared.requestCount)
 	end
 
 	do --formatting response table
-		--resData = env.lib.serialization.dump(resData) --placeholder
+		--responseData = env.lib.serialization.dump(responseData) --placeholder
 		local suc, responseString = false, "[Formatter returned no error value]"
 
 		if type(responseFormatter) == "function" then
-			suc, responseString = xpcall(responseFormatter, debug.traceback, resData)
+			suc, responseString = xpcall(responseFormatter, debug.traceback, responseData, requestData.headers)
 		end
 
 		if suc ~= true then
 			local newResponseString = [[
-	Can't format response table. 
-	Formatter error: ]] .. tostring(responseString) .. [[ 
-	Falling back to human readable lua-table.
+Can't format response table. 
+Formatter error: ]] .. tostring(responseString) .. [[ 
+Falling back to human readable lua-table.
 			]] .. "\n"
 
-			newResponseString = newResponseString .. env.lib.ut.tostring(resData)
-			resDataString = newResponseString
+			newResponseString = newResponseString .. env.lib.ut.tostring(responseData)
+			responseDataString = newResponseString
 		else
-			resDataString = responseString
+			responseDataString = responseString
 		end
 	end
 end
 
-callbackStream:push({headers = resHeaders, data = resDataString})
+callbackStream:push({headers = resHeaders, data = responseDataString})
 ldlog("CALLBACK THREAD END")
 env.stop()

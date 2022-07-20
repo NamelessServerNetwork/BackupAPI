@@ -1,22 +1,35 @@
 local requestData = ...
 
-local body = env.dyn.html.Body.new()
 local id = tostring(env.getThreadInfos().id)
+
+local returnTable = {}
 
 local suc, output = execScript("changePasswd.exp " .. id, {
     ["DAMS_USER_" .. id] = requestData.request.username,
     ["DAMS_PASSWD_" .. id] = requestData.request.currentPasswd,
     ["DAMS_NEWPASSWD1_" .. id] = requestData.request.newPasswd1,
     ["DAMS_NEWPASSWD2_" .. id] = requestData.request.newPasswd2,
-}, false)
+}, true)
 
-
+--create return table
 if suc == 0 then
-    body:addP("Password successfully changed!")
-else 
-    body:addP("Password not changed")
+    returnTable.success = true
+else
+    returnTable.success = false
 end
 
-body:goBack(requestData, 3)
+returnTable.exitCode = suc
+if suc == 1 then
+    returnTable.error = "User does not exist"
+elseif suc == 2 then
+    returnTable.error = "Wrong password"
+elseif suc == 2 then
+    returnTable.error = "Password do not match"
+else
+    returnTable.error = "Something unexpected happened"
+end
 
-return body:generateCode()
+returnTable.html = {}
+returnTable.html.forwardInternal = "changePasswdResult"
+
+return returnTable

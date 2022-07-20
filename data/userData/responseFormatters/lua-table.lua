@@ -1,9 +1,13 @@
-local resData = ...
+local responseData = ...
 
-local returnString = env.lib.serialization.dump(resData)
+if responseData.returnValue and responseData.returnValue.html then
+    responseData.returnValue.html = nil
+end
+
+local returnString = env.lib.serialization.dump(responseData)
 
 if type(returnString) == "string" then
-    return true, returnString
+    return returnString
 else
-    return false, returnString
+    return returnString
 end
