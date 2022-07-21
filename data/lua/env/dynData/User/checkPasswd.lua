@@ -1,9 +1,9 @@
 return function(self, loginPassword)
-	local db = env.userDB
+	local db = env.loginDB
 	local userExists = false
 	local errCode, reason = nil, nil
 	local username, userPassword = nil, nil
-	local userID = self.id
+	local userID = self:getID()
 	
 	if type(tonumber(userID)) ~= "number" then
 		return false, -201, "No valid userID given"
@@ -33,12 +33,12 @@ return function(self, loginPassword)
 		return false, errCode, reason
 	else
 		if userExists then
-			if userPassword == loginPassword then
-				log("User (" .. userID .. ") logged in.")
+			if userPassword == env.hashPasswd(loginPassword) then
+				debug.ulog("User (" .. userID .. ") logged in.")
 				return true
 			else
-				log("User (" .. userID .. ") tryed to login with wrong password!")
-				return false, -3, "No password not matching."
+				debug.ulog("User (" .. userID .. ") tryed to login with wrong password!")
+				return false, -3, "Wrong password"
 			end
 		else
 			return false, -202, "User not found by userID"

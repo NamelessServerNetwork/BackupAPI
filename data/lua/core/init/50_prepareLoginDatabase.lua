@@ -29,7 +29,7 @@ dlog("Create permissions table: " .. tostring(db:exec([[
 ]])))
 
 
-dlog("Prepare sysinfo table: " .. tostring(env.userDB:exec([[
+dlog("Prepare sysinfo table: " .. tostring(env.loginDB:exec([[
 	SELECT userCount FROM sysinfo
 ]], function(udata,cols,values,names)
 	for i=1,cols do 

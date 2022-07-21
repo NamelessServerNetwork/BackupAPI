@@ -1,7 +1,3 @@
-return function(user)
-	if type(user) == "number" then
-		return user
-	else
-		return user:getID()
-	end
+return function(self)
+	return self.id
 end

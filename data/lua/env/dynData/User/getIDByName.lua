@@ -1,5 +1,5 @@
 return function(username)
-	local db = env.userDB
+	local db = env.loginDB
 	local userExists = false
 	local errCode, reason = nil, nil
 	local userID = nil
@@ -8,7 +8,7 @@ return function(username)
 		return false, -1, "No valid username given"
 	end
 	
-	dlog("Try to get user by name: \"" .. username .. "\"")
+	--dlog("Try to get user by name: \"" .. username .. "\"")
 	
 	--check user existance.
 	errCode = db:exec([[SELECT id FROM users WHERE username = "]] .. username .. [["]], function(udata, cols, values, names)

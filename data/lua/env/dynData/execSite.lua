@@ -1,7 +1,7 @@
 return function(site, requestData)
     local sitePath = site
     local siteFunc
-    local suc, err
+    local suc, err, headers
     local returnValue
 
     if site == "/" then
@@ -11,7 +11,7 @@ return function(site, requestData)
 
     if env.lib.lfs.attributes("data/" .. sitePath) ~= nil then
         siteFunc = loadfile(sitePath)
-        suc, err = xpcall(siteFunc, debug.traceback, requestData)
+        suc, err, headers = xpcall(siteFunc, debug.traceback, requestData)
 
         if suc ~= true then
             debug.err("Site execution failed")
@@ -31,5 +31,5 @@ Stack traceback:
         returnValue = "Error 404\nSite not found"
     end
 
-    return suc, returnValue
+    return suc, returnValue, headers
 end

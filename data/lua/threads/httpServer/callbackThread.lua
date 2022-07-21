@@ -2,7 +2,7 @@ ldlog("CALLBACK THREAD START")
 
 local callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring(env.getThreadInfos().id))
 
-local resHeaders = {}
+local responseHeaders = {}
 local responseData = {success = false}
 local responseDataString = "If you see this, something went terrebly wrong. Please contact a system administrator."
 
@@ -34,7 +34,7 @@ local function executeUserOrder(request)
 	if func ~= nil then
 		local logPrefix = env.debug.getLogPrefix()
 		env.debug.setLogPrefix("[USER_ACTION]")
-		responseData.returnValue = func(requestData)
+		responseData.returnValue, responseHeaders = func(requestData)
 		responseData.success = true
 		env.debug.setLogPrefix(logPrefix)
 	else
@@ -80,8 +80,10 @@ end
 --dlog(requestData.headers[":method"].value)
 --dlog(requestData.body)
 
+env.cookie.current = env.dyn.getCookies(requestData)
+
 if requestData.headers[":method"].value == "GET" then
-	_, responseDataString = env.dyn.execSite(requestData.headers[":path"].value, requestData)
+	_, responseDataString, responseHeaders = env.dyn.execSite(requestData.headers[":path"].value, requestData)
 else
 	do --formatting user request
 		local suc
@@ -171,6 +173,11 @@ Falling back to human readable lua-table.
 	end
 end
 
-callbackStream:push({headers = resHeaders, data = responseDataString})
+if type(responseHeaders) ~= "table" then
+	responseHeaders = {}
+end
+
+callbackStream:push({headers = responseHeaders, data = responseDataString, cookies = env.cookie.new})
+env.cookie = {current = {}, new = {}}
 ldlog("CALLBACK THREAD END")
 env.stop()

@@ -10,7 +10,7 @@ elseif type(values) ~= "string" then
 	return false
 end
 
-env.userDB:exec([[SELECT ]] .. values .. [[, rowid FROM ]] .. dbTable .. [[]], function(udata, cols, values, names)	
+env.loginDB:exec([[SELECT ]] .. values .. [[, rowid FROM ]] .. dbTable .. [[]], function(udata, cols, values, names)	
 	local rowid
 	
 	for i = 1, cols do

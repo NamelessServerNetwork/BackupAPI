@@ -5,7 +5,7 @@ local args = loadfile("data/lua/core/parseArgs.lua")(args, version) --parse args
 
 --===== pre initialisation =====--
 
-local devConf = loadfile("data/lua/devConf.lua")()
+local devConf = loadfile("data/devConf.lua")()
 local logfile = loadfile("data/lua/core/initLogfile.lua")(devConf, args)
 
 local env, shared = loadfile("data/lua/env/envInit.lua")({name = "[MAIN]", mainThread = true, id = 0, logfile = logfile})

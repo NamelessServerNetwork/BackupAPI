@@ -31,7 +31,7 @@ if initData.mainThread == true then --makes the print funciton logging into the 
 end
 
 --=== load devConf ===--
-local devConf = loadfile("data/lua/devConf.lua")()
+local devConf = loadfile("data/devConf.lua")()
 env.devConf = devConf
 
 package.path = devConf.requirePath .. ";" .. package.path

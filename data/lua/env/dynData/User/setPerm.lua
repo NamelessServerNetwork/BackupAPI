@@ -1,15 +1,15 @@
-return function(user, perm, level)
-	local userID = env.getUserID(user)
-	local db = env.userDB
+return function(self, perm, level)
+	local userID = self:getID()
+	local db = env.loginDB
 	local reason, suc = nil, nil
 	
-	local permSetAlready, permLevelError = env.getPermissionLevel(user, perm)
+	local permSetAlready, permLevelError = self:getPerm(perm)
 	
 	if permSetAlready == true then
-		dlog("Update permission: " .. perm .. ", userID: " .. tostring(userID) .. ", to level: " .. tostring(level))
+		debug.ulog("Update permission: " .. perm .. ", userID: " .. tostring(userID) .. ", to level: " .. tostring(level))
 		suc = db:exec([[UPDATE permissions SET level = "]] .. tostring(level) .. [[" WHERE permission = "]] .. perm .. [[" AND userID = ]] .. tostring(userID))
 	elseif permSetAlready == false then
-		dlog("Set permission: " .. perm .. ", userID: " .. tostring(userID) .. ", to level: " .. tostring(level))
+		debug.ulog("Set permission: " .. perm .. ", userID: " .. tostring(userID) .. ", to level: " .. tostring(level))
 		suc = db:exec([[INSERT INTO permissions VALUES ("]] .. tostring(userID) .. [[", "]] .. perm .. [[", ]] .. tostring(level) .. [[)]])
 	else
 		err("Cant set permission: " .. tostring(permSetAlready) .. " (" .. permLevelError .. ")")
