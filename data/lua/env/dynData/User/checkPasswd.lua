@@ -1,14 +1,14 @@
-return function(self, loginPassword)
+return function(self, passwd)
 	local db = env.loginDB
 	local userExists = false
 	local errCode, reason = nil, nil
-	local username, userPassword = nil, nil
+	local username, passwdHash = nil, nil
 	local userID = self:getID()
 	
 	if type(tonumber(userID)) ~= "number" then
 		return false, -201, "No valid userID given"
 	end
-	if type(loginPassword) ~= "string" or loginPassword == "" then
+	if type(passwd) ~= "string" or passwd == "" then
 		return false, -2, "No valid password given"
 	end
 	
@@ -17,7 +17,7 @@ return function(self, loginPassword)
 	--check user existance.
 	errCode = db:exec([[SELECT username, password FROM users WHERE id = "]] .. tostring(userID) .. [["]], function(udata, cols, values, names)
 		username = values[1]
-		userPassword = values[2]
+		passwdHash = values[2]
 		
 		if not userExists then
 			userExists = true
@@ -33,7 +33,7 @@ return function(self, loginPassword)
 		return false, errCode, reason
 	else
 		if userExists then
-			if userPassword == env.hashPasswd(loginPassword) then
+			if env.verifyPasswd(passwdHash, passwd) then
 				debug.ulog("User (" .. userID .. ") logged in.")
 				return true
 			else
