@@ -28,10 +28,10 @@ local function executeUserOrder(request)
 	end
 	
 	if requestedAction ~= nil then
-		func, err = loadfile("/userData/actions/" .. requestedAction .. ".lua")
+		func, err = env.dyn.getActionFunc("data/userData/actions/" .. requestedAction .. ".lua")
 	end
 	
-	if func ~= nil then
+	if type(func) == "function" then
 		local logPrefix = env.debug.getLogPrefix()
 		env.debug.setLogPrefix("[USER_ACTION]")
 		responseData.returnValue, responseHeaders = func(requestData)
@@ -39,7 +39,7 @@ local function executeUserOrder(request)
 		env.debug.setLogPrefix(logPrefix)
 	else
 		warn("Recieved unknown user action request: " .. tostring(requestedAction))
-		responseData.error = "Invalid user action \n" .. err 
+		responseData.error = "Invalid user action: " .. err 
 	end
 end
 

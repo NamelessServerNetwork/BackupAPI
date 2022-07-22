@@ -10,7 +10,8 @@ return function(site, requestData)
     sitePath = "userData/sites/" .. sitePath .. ".lua" --completing sitePath
 
     if env.lib.lfs.attributes("data/" .. sitePath) ~= nil then
-        siteFunc = loadfile(sitePath)
+        siteFunc = env.dyn.getActionFunc("data/" .. sitePath)
+
         suc, err, headers = xpcall(siteFunc, debug.traceback, requestData)
 
         if suc ~= true then
@@ -29,6 +30,7 @@ Stack traceback:
     else
         warn("Someone tryed to access non existing site: '" .. site .. "'")
         returnValue = "Error 404\nSite not found"
+        headers = {[":status"] = 404}
     end
 
     return suc, returnValue, headers
