@@ -33,10 +33,10 @@ local function executeUserOrder(request)
 	
 	if type(func) == "function" then
 		local logPrefix = env.debug.getLogPrefix()
-		env.debug.setLogPrefix("[USER_ACTION]")
+		debug.setLogPrefix("[ACTION]")
 		responseData.returnValue, responseHeaders = func(requestData)
 		responseData.success = true
-		env.debug.setLogPrefix(logPrefix)
+		debug.setLogPrefix(logPrefix)
 	else
 		warn("Recieved unknown user action request: " .. tostring(requestedAction))
 		responseData.error = "Invalid user action: " .. err 
@@ -83,7 +83,10 @@ end
 env.cookie.current = env.dyn.getCookies(requestData)
 
 if requestData.headers[":method"].value == "GET" then
+	local logPrefix = env.debug.getLogPrefix()
+	debug.setLogPrefix("[SITE]")
 	_, responseDataString, responseHeaders = env.dyn.execSite(requestData.headers[":path"].value, requestData)
+	debug.setLogPrefix(logPrefix)
 else
 	do --formatting user request
 		local suc

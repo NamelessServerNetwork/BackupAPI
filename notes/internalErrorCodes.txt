@@ -7,8 +7,9 @@
 -4: username not found.
 -5: user mail address not found.
 
--10: login token not found.
--11: login token expired.
+-10: session not found.
+-11: session expired.
+-12: invalid token.
 
 -50: cant set permission.
 

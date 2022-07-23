@@ -1,14 +1,14 @@
 local Session = {}
 
-function Session.new(token)
+function Session.new(sessionID, token)
     local self = setmetatable({}, {__index = Session})
     
     local sessionExists = false
 
     self.sessionData = {}
-    self.sessionData.token = token
+    self.sessionData.sessionID = sessionID
 
-    errCode = env.loginDB:exec([[SELECT userID, expireTime FROM sessions WHERE token = "]] .. token .. [["]], function(_, cols, values, names)
+    errCode = env.loginDB:exec([[SELECT token, userID, expireTime FROM sessions WHERE sessionID = "]] .. sessionID .. [["]], function(_, cols, values, names)
         for index, name in ipairs(names) do
             self.sessionData[name] = values[index]
         end
@@ -20,7 +20,7 @@ function Session.new(token)
     end
 
     if not self.sessionData.userID then
-        return false, -10, "Token not found"
+        return false, -10, "sessionID not found"
     end
 
     if tonumber(self.sessionData.expireTime) ~= -1 and tonumber(self.sessionData.expireTime) < os.time() then
@@ -28,7 +28,11 @@ function Session.new(token)
             self:delete()
         end
 
-        return false, -11, "Token expired"
+        return false, -11, "sessionID expired"
+    end
+
+    if not env.verifyPasswd(self.sessionData.token, token) then
+        return false, -12, "Invalid session"
     end
 
     return self
@@ -36,24 +40,27 @@ end
 
 function Session.create(user, expireTime) --expireTime in seconds ongoing from 1970 00:00:00 UTC (os.time(...) in unix systems) or a time table.
     local token = env.lib.ut.randomString(32)
+    local sessionID = env.lib.ut.randomString(32)
     local suc
 
     if type(expireTime) == "table" then
         expireTime = os.time(expireTime)
     end
+    
+    --print([[INSERT INTO sessions VALUES ("]] .. sessionID .. [[", "]] .. env.hashPasswd(token) .. [[", ]] .. expireTime ..[[, ]] .. tostring(user:getID()) .. [[)]])
 
-    suc = env.loginDB:exec([[INSERT INTO sessions VALUES (]] .. tostring(user:getID()) .. [[, "]] .. token .. [[", ]] .. expireTime ..[[)]])
+    suc = env.loginDB:exec([[INSERT INTO sessions VALUES ("]] .. sessionID .. [[", "]] .. env.hashPasswd(token) .. [[", ]] .. expireTime ..[[, ]] .. tostring(user:getID()) .. [[)]])
 
     if suc ~= 0 then
         return false, suc
     else
-        return true, Session.new(token)
+        return true, Session.new(sessionID, token), token
     end
 end
 
 
-function Session:getToken()
-    return self.sessionData.token
+function Session:getSessionID()
+    return self.sessionData.sessionID
 end
 
 function Session:renew(expireTime)
@@ -67,7 +74,7 @@ function Session:renew(expireTime)
         error("Invalid expire time given", 2)
     end
 
-    suc = env.loginDB:exec([[UPDATE sessions SET expireTime = ]] .. tostring(expireTime) .. [[ WHERE token = "]] .. self:getToken() .. [["]])
+    suc = env.loginDB:exec([[UPDATE sessions SET expireTime = ]] .. tostring(expireTime) .. [[ WHERE sessionID = "]] .. self:getSessionID() .. [["]])
 
     if suc == 0 then
         return true
@@ -79,7 +86,7 @@ end
 function Session:delete()
     local suc
 
-    suc = env.loginDB:exec([[DELETE FROM sessions WHERE token = "]] .. self:getToken() .. [["]])
+    suc = env.loginDB:exec([[DELETE FROM sessions WHERE sessionID = "]] .. self:getSessionID() .. [["]])
 
     if suc == 0 then
         return true

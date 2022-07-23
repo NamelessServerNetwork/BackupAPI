@@ -30,9 +30,10 @@ dlog("Create permissions table: " .. tostring(db:exec([[
 
 dlog("Create sessions table: " .. tostring(db:exec([[
 	CREATE TABLE sessions (
-		userID INTEGER NOT NULL,
+		sessionID TEXT NOT NULL,
 		token TEXT NOT NULL,
-		expireTime INTEGER NOT NULL
+		expireTime INTEGER NOT NULL,
+		userID INTEGER NOT NULL
 	);
 ]])))
 
