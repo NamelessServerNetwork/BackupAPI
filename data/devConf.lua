@@ -23,6 +23,11 @@ local devConf = {
 		defaultRequestFormat = "lua-table",
 		defaultResponseFormat = "lua-table",
 	},
+
+	session = {
+		deleteExpiredSessions = true, --if true an expired session gets deletet if the system tryed to enter it.
+		cleanupExpiredSessionsAtShutdown = true,  --if true expired sessions gets cleaned up on shutdown.
+	},
 	
 	terminal = {
 		commands = {

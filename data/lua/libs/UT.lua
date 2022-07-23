@@ -18,7 +18,7 @@
 --[[UsefullThings libary
 	
 ]]
-local UT = {version = "v0.8.5"}
+local UT = {version = "v0.8.7"}
 
 function UT.getVersion()
 	return UT.version
@@ -123,6 +123,9 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 			end
 			if type (value) == "table" and not done [value] then
 				done [value] = true
+				if type(key) == "string" then
+					key = "'" .. key .. "'"
+				end
 				if lineBreak then
 					table.insert(sb, "[" .. tostring(key) .. "] = {" .. lbString);
 				else
@@ -145,6 +148,9 @@ function UT.tostring(var, lineBreak, indent, done, internalRun)
 			else
 				if sb[#sb] == "}," then
 					table.insert(sb, " ")
+				end
+				if type(key) == "string" then
+					key = "'" .. key .. "'"
 				end
 				if type(value) ~= "boolean" and type(value) ~= "number" then
 					table.insert(sb, string.format("%s = \"%s\"," .. lbString, "[" .. tostring (key) .. "]", tostring(value)))
@@ -178,18 +184,23 @@ function UT.readFile(path)
 	end
 end
 
-do --randomString: Source: https://gist.github.com/haggen/2fd643ea9a261fea2094
-	local charset = {}  do -- [0-9a-zA-Z]
-		for c = 48, 57  do table.insert(charset, string.char(c)) end
-		for c = 65, 90  do table.insert(charset, string.char(c)) end
-		for c = 97, 122 do table.insert(charset, string.char(c)) end
+function UT.randomString(length, charset)
+    local randomTable = {}
+    local charset = charset or "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+    math.randomseed(os.clock() * 1000000)
+
+	if not length or length <= 0 then
+		return ""
 	end
-	local function randomString(length)
-		if not length or length <= 0 then return '' end
-		math.randomseed(os.clock()^5)
-		return randomString(length - 1) .. charset[math.random(1, #charset)]
-	end
-	UT.randomString = randomString
+
+    for i = 1, length do
+        local randomNumber = math.random(1, #charset)
+        local randomChar = string.sub(charset, randomNumber, randomNumber)
+
+        table.insert(randomTable, randomChar)
+    end
+
+    return table.concat(randomTable)
 end
 
 return UT

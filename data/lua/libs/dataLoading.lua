@@ -53,12 +53,19 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 					suc, err = loadFunc(path .. file)
 				else
 					--suc, err = loadfile(path .. file)
-					local fileCode, fileErr = env.ut.readFile("data/" .. path .. file)
+					local filePath = "data/" .. path .. file
+					local fileCode, fileErr = env.ut.readFile(filePath)
+					local tracebackPathNote = filePath
 					--print(path .. file)
 					if fileCode == nil then
 						suc, err = nil, fileErr
 					else
-						suc, err = loadstring(defaultFileCode .. fileCode)
+						local cutPoint = select(2, string.find(tracebackPathNote, "env"))
+						if cutPoint then
+							tracebackPathNote = string.sub(tracebackPathNote, cutPoint + 2)
+						end
+
+						suc, err = loadstring("--[[" .. tracebackPathNote .. "]] " .. defaultFileCode .. fileCode)
 					end
 				end
 				

@@ -3,9 +3,9 @@ local responseHeaders = {}
 
 local User = env.dyn.User
 
-local user = User.new("test25")
+local user = User.new("test")
 
-log("Change username: ", user:setName("test25"))
+log("Change username: ", user:setName("test"))
 
 log("Change passwd: ", user:setPasswd("1233"))
 log("Passwd: ", user:checkPasswd("1233"))

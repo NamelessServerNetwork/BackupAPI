@@ -10,9 +10,14 @@ return function(site, requestData)
     sitePath = "userData/sites/" .. sitePath .. ".lua" --completing sitePath
 
     if env.lib.lfs.attributes("data/" .. sitePath) ~= nil then
-        siteFunc = env.dyn.getActionFunc("data/" .. sitePath)
+        siteFunc, err = env.dyn.getActionFunc("data/" .. sitePath)
 
-        suc, err, headers = xpcall(siteFunc, debug.traceback, requestData)
+        if type(siteFunc) ~= "function" then
+            debug.err("Cant execute site: " .. site .. "\n" .. err)
+            suc = false
+        else
+            suc, err, headers = xpcall(siteFunc, debug.traceback, requestData)
+        end
 
         if suc ~= true then
             debug.err("Site execution failed")

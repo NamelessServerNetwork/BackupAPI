@@ -13,7 +13,7 @@ return function(self, perm, level)
 		suc = db:exec([[INSERT INTO permissions VALUES ("]] .. tostring(userID) .. [[", "]] .. perm .. [[", ]] .. tostring(level) .. [[)]])
 	else
 		err("Cant set permission: " .. tostring(permSetAlready) .. " (" .. permLevelError .. ")")
-		suc, reason = -11, tostring(permSetAlready) .. " (" ..  tostring(permLevelError) .. ")"
+		suc, reason = -50, tostring(permSetAlready) .. " (" ..  tostring(permLevelError) .. ")"
 	end
 	
 	return suc, reason

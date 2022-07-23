@@ -28,6 +28,14 @@ dlog("Create permissions table: " .. tostring(db:exec([[
 	);
 ]])))
 
+dlog("Create sessions table: " .. tostring(db:exec([[
+	CREATE TABLE sessions (
+		userID INTEGER NOT NULL,
+		token TEXT NOT NULL,
+		expireTime INTEGER NOT NULL
+	);
+]])))
+
 
 dlog("Prepare sysinfo table: " .. tostring(env.loginDB:exec([[
 	SELECT userCount FROM sysinfo
