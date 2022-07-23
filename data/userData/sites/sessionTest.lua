@@ -1,4 +1,4 @@
-log(Session)
+--log(Session)
 
 --debug.setLogPrefix("TTTT")
 
@@ -8,14 +8,14 @@ local session, err
 local timeTable = os.date("*t")
 timeTable.sec = timeTable.sec + 120
 
-if true then
-    _, session, token = Session.create(user, timeTable)
+if false then
+    _, session, sessionLogin = Session.create(user, timeTable)
     log("session:", session)
     log("sessionID:", session:getSessionID())
-    log("token:", token)
+    log("sessionLogin:", sessionLogin)
 end
 
-log(Session.new("HjG9GGR2jI3grIJWq4eomnPMV6xZ5QDb", "WmxzuVDnB9mhRT8RnLhxsa2j6l7OJAgR"))
+log(Session.new("kOpqMEc0FWlMfwezwMqiL9z40K9VQG1m$QupxElPl6pTPXHWnhjknJaXVSHpNlLIc"))
 
 timeTable = os.date("*t")
 timeTable.min = timeTable.min + 5

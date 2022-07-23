@@ -9,7 +9,8 @@
 
 -10: session not found.
 -11: session expired.
--12: invalid token.
+-12: invalid session token.
+-13: can not verify session token.
 
 -50: cant set permission.
 

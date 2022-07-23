@@ -1,12 +1,19 @@
 local Session = {}
 
-function Session.new(sessionID, token)
+function Session.new(sessionLogin)
     local self = setmetatable({}, {__index = Session})
-    
-    local sessionExists = false
+
+    local seperatorPos = string.find(sessionLogin, "[$]") or math.huge
+
+    local sessionID = string.sub(sessionLogin, 0, seperatorPos - 1)
+    local token = string.sub(sessionLogin, seperatorPos + 1)
 
     self.sessionData = {}
     self.sessionData.sessionID = sessionID
+
+    if sessionID == "" or token == "" then
+        return false, -12, "No valid session token given"
+    end
 
     errCode = env.loginDB:exec([[SELECT token, userID, expireTime FROM sessions WHERE sessionID = "]] .. sessionID .. [["]], function(_, cols, values, names)
         for index, name in ipairs(names) do
@@ -32,7 +39,7 @@ function Session.new(sessionID, token)
     end
 
     if not env.verifyPasswd(self.sessionData.token, token) then
-        return false, -12, "Invalid session"
+        return false, -13, "Can not verify session token"
     end
 
     return self
@@ -54,7 +61,7 @@ function Session.create(user, expireTime) --expireTime in seconds ongoing from 1
     if suc ~= 0 then
         return false, suc
     else
-        return true, Session.new(sessionID, token), token
+        return true, Session.new(sessionID .. "$" .. token), sessionID .. "$" .. token
     end
 end
 
