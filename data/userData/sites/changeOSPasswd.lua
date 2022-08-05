@@ -1,5 +1,3 @@
-local requestData = ...
-
 local body = env.dyn.html.Body.new()
 
 body:addHeader(3, "Change password")
@@ -11,7 +9,7 @@ body:addAction("", "POST", {
     {"input", name = "Username:", target = "username", value = "testuser"},
     {"input", type = "password", name = "Current password:", target = "currentPasswd"},
     {"input", type = "password", name = "New password:", target = "newPasswd1"},
-    {"input", type = "password", name = "Repeate password:", target = "newPasswd2"},
+    {"input", type = "password", name = "Repeat password:", target = "newPasswd2"},
     {"submit", value = "Change password"},
 })
 

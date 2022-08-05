@@ -1,5 +1,3 @@
-local requestData = ...
-
 local id = tostring(env.getThreadInfos().id)
 
 local returnTable = {}

@@ -14,7 +14,7 @@ else
         body:addP(requestData.error)
         body:addP("Error code: " .. tostring(requestData.exitCode))
     end
-    body:addGoBackButton("Try again", requestData)
+    body:addGoBackButton(requestData, "Try again")
 end
 
 return body:generateCode()

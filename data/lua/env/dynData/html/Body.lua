@@ -1,15 +1,33 @@
 local Body = {}
 
-log("EXEC!")
+local parseArgs = env.lib.ut.parseArgs
 
 function Body.new()
-    local self = setmetatable({}, {__index = Body})
+    local self = setmetatable({}, {__index = function(...)
+        local _, index = ...
+        return function(...)
+            local args = {...}
+
+            if type(args[1]) ~= "table" then
+                return Body[index]({content = {}}, unpack(args))
+            else 
+                return Body[index](...)
+            end
+        end
+    end})
 
     self.content = {
         "<!DOCTYPE html> \n<html>",
     }
 
     return self
+end
+
+function Body:addToBody(text)
+    if self then 
+        table.insert(self.content, text)
+    end
+    return text
 end
 
 function Body:addRaw(text)
@@ -28,10 +46,10 @@ function Body:addRefButton(name, link)
     return html
 end
 
-function Body:addGoBackButton(name, requestData)
+function Body:addGoBackButton(requestData, name)
     local html
-    if requestData.headers and requestData.headers.referer then
-        local referer = requestData.headers.referer.value 
+    local referer = env.dyn.http.getReferer(requestData, true)
+    if referer then
         html = [[
 <a href="]]..referer..[[">  
     <input type="button" value="]]..name..[["/>  
@@ -50,10 +68,10 @@ function Body:addAction(link, method, actions)
     local actionString = [[<form action="]]..link..[[" method="]]..method..[[">]]
     for _, action in pairs(actions) do
         if action[1] == "input" then
-            local target = env.lib.ut.parseArgs(action.target, action.id, action.name)
-            local type = env.lib.ut.parseArgs(action.type, "text")
-            local value = env.lib.ut.parseArgs(action.value, "")
-            local name = env.lib.ut.parseArgs(action.name, "")
+            local target = parseArgs(action.target, action.id, action.name)
+            local type = parseArgs(action.type, "text")
+            local value = parseArgs(action.value, "")
+            local name = parseArgs(action.name, "")
             actionString = actionString .. [[
 <div>
     <label for="]]..name..[[">]]..name..[[</label>
@@ -61,7 +79,7 @@ function Body:addAction(link, method, actions)
 </div>
 ]]
         elseif action[1] == "hidden" then
-            local target = env.lib.ut.parseArgs(action.target, action.id, action.name)
+            local target = parseArgs(action.target, action.id, action.name)
             actionString = actionString .. [[
 <div>
     <input type="hidden" name="]]..target..[[" value="]]..action.value..[[">
@@ -74,8 +92,8 @@ function Body:addAction(link, method, actions)
 </div>
 ]]
         elseif action[1] == "button" or action[1] == "submit" then
-            local type = env.lib.ut.parseArgs(action.type, action[1])
-            local value = env.lib.ut.parseArgs(action.value, action.name)
+            local type = parseArgs(action.type, action[1])
+            local value = parseArgs(action.value, action.name)
             actionString = actionString .. [[
 <div>
     <button type="]]..type..[[">]]..value..[[</button>
@@ -94,24 +112,6 @@ function Body:addHeader(level, text)
     table.insert(self.content, html)
 end
 
-function Body:addReturnButton(text, requestData)
-    local html 
-    if requestData.headers and requestData.headers.referer then
-        local referer = requestData.headers.referer.value 
-        html = [[
-<a href="]]..referer..[[">  
-    <input type="button" value="]]..tostring(text)..[["/>  
-</a>     
-]]
-    else
-        html = [[
-<p>(Return button error. Please contact an admin.)</p>
-]]
-    end
-    table.insert(self.content, html)
-    return html
-end
-
 function Body:addP(text)
     local html = [[
 <p>]]..tostring(text)..[[</p>
@@ -119,6 +119,15 @@ function Body:addP(text)
     table.insert(self.content, html)
     return html
 end 
+
+function Body:addLink(link, name)
+    local html = [[
+<a href="]] .. link .. [[">]] .. parseArgs(name, link) .. [[</a>
+]]
+    table.insert(self.content, html)
+    return html
+end
+
 
 function Body:goTo(link, delay)
     local html = [[
@@ -130,8 +139,8 @@ end
 
 function Body:goBack(requestData, delay)
     local html
-    if requestData.headers and requestData.headers.referer then
-        local referer = requestData.headers.referer.value 
+    local referer = env.dyn.http.getReferer(requestData, true)
+    if referer then
         html = [[
 <meta http-equiv="Refresh" content="]]..tostring(delay or 0)..[[; url=']]..referer..[['" />
 ]]

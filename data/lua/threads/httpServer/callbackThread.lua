@@ -84,8 +84,10 @@ env.cookie.current = env.dyn.getCookies(requestData)
 
 if requestData.headers[":method"].value == "GET" then
 	local logPrefix = env.debug.getLogPrefix()
+	local requestedSite = requestData.headers[":path"].value
 	debug.setLogPrefix("[SITE]")
-	_, responseDataString, responseHeaders = env.dyn.execSite(requestData.headers[":path"].value, requestData)
+	
+	_, responseDataString, responseHeaders = env.dyn.execSite(requestedSite, requestData)
 	debug.setLogPrefix(logPrefix)
 else
 	do --formatting user request

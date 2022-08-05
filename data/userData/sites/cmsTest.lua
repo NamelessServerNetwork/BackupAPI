@@ -20,7 +20,7 @@ body:addAction("dumpRequest", "POST",
     {"submit", value = "Do it! "},
 })
 
-body:addReturnButton("Return", requestData)
+body:addGoBackButton(requestData, "Return")
 
 
 return body:generateCode()

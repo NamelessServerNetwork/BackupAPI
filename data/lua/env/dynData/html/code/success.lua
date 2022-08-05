@@ -1,4 +1,5 @@
 return function(requestData)
+    local referer = env.dyn.http.getReferer(requestData, true)
     local returnString = [[
 <html>
     <head>
@@ -7,9 +8,7 @@ return function(requestData)
     <h3>Success!</h3>
 ]]
 
-    if requestData.headers.referer then
-        local referer = requestData.headers.referer.value
-
+    if referer then
         returnString = returnString .. [[
 <body>     
     <a href="]]..referer..[[">  
