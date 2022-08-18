@@ -122,8 +122,7 @@ end
 
 function Body:addLink(link, name)
     local html = [[
-<a href="]] .. link .. [[">]] .. parseArgs(name, link) .. [[</a>
-]]
+<a href="]] .. link .. [[">]] .. parseArgs(name, link) .. [[</a>]]
     table.insert(self.content, html)
     return html
 end

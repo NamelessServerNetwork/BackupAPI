@@ -61,6 +61,7 @@ local function loadDir(target, dir, logFuncs, overwrite, subDirs, structured, pr
 						suc, err = nil, fileErr
 					else
 						local cutPoint = select(2, string.find(tracebackPathNote, "env"))
+						local cutPoint = select(2, string.find(tracebackPathNote, "userData"))
 						if cutPoint then
 							tracebackPathNote = string.sub(tracebackPathNote, cutPoint + 2)
 						end
