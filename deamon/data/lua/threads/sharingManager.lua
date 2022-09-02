@@ -83,7 +83,7 @@ end
 function _internal.execRequest(request)
 	if request ~= nil then
 		if responseChannels[request.threadID] == nil then
-			os.execute("echo " .. request.threadID .. " > tt")
+			--os.execute("echo " .. request.threadID .. " > tt")
 			responseChannels[request.threadID] = env.thread.getChannel("SHARED_RESPONSE#" .. tostring(request.threadID))
 		end
 
