@@ -4,14 +4,12 @@ local openStreams = {}
 local _
 
 local function callback(myserver, stream)
-	log("Got user request from: ")	
-	
 	--=== create local variables ===--
 	local callbackStream, callbackData
 	
 	local req_headers = assert(stream:get_headers())
 	local requestData, headers = {}, {}
-	local ip = nil
+	local connectionIP, realIP = select(2, stream:peername()), nil
 
 	--=== init ===--
 	ldlog("Load headers")
@@ -23,19 +21,19 @@ local function callback(myserver, stream)
 	end
 
 	ldlog("Get IP")
-	do
-		if headers["proxy-ip"] ~= nil then
-			ip = headers["proxy-ip"].value
-		else
-			ip = select(2, stream:peername())
-		end
-		log(ip)
+	if headers["proxy-ip"] ~= nil then
+		realIP = headers["proxy-ip"].value
+	else
+		realIP = connectionIP
 	end
 
 	requestData.headers = headers
 	requestData.body = stream:get_body_as_string()
-	requestData.meta = {ip = ip}
+	requestData.meta = {realIP = realIP, connectionIP = connectionIP}
 
+	log("Got user request: realIP: " .. realIP .. ", connectionIP: " .. tostring(select(2, stream:peername())))	
+
+	--===== start callback thread =====--
 	ldlog("Start callback thread")
 	local _, thr, id = env.startFileThread("lua/threads/httpServer/callbackThread.lua", "HTTP_CALLBACK_THREAD", requestData)
 	callbackStream = env.thread.getChannel("HTTP_CALLBACK_STREAM#" .. tostring(id))
