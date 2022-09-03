@@ -33,7 +33,7 @@ Stack traceback:
             returnValue = err
         end
     else
-        warn("Someone tryed to access non existing site: '" .. site .. "'")
+        warn("Someone (" .. tostring(requestData.meta.ip) .. ") tryed to access non existing site: '" .. site .. "'")
         returnValue = "Error 404\nSite not found"
         headers = {[":status"] = 404}
     end
