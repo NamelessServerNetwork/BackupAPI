@@ -9,18 +9,16 @@ body:addRaw([[
 </style>
 ]])
 
-
 body:addRaw([[<div>]])
-body:addHeader(1, "Login")
+body:addHeader(1, "Signup")
 body:addAction("", "POST", {
-    {"hidden", target = "action", value = "login"},
+    {"hidden", target = "action", value = "signup"},
     {"input", target = "username", name = "Username:", value = ""},
     {"input", target = "password", name = "Password:", type = "password", value = ""},
-    {"button", type = "supmit", value = "Login"},
+    {"input", target = "password2", name = "Repeate password:", type = "password", value = ""},
+    {"button", type = "supmit", value = "Signup"},
 })
-
-body:addP("")
-body:addRefButton("Sign up", "signup")
 body:addRaw([[</div>]])
+
 
 return body:generateCode()

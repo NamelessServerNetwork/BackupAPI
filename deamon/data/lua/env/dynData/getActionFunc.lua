@@ -2,13 +2,13 @@ return function(path) --generates avtion/site functions.
     local siteCode = env.lib.ut.readFile(path)
     local tracebackPathNote = path
 
-    if not siteCode then
-        return false, "File not found"
-    end
-
     tracebackPathNote = string.sub(tracebackPathNote, select(2, string.find(tracebackPathNote, "userData")) + 2)
 
-    siteCode = "--[[" .. tracebackPathNote .. "]] local args = {...}; local requestData, cookie, Session = args[1], env.cookie, env.dyn.Session; " .. siteCode
+    if not siteCode then
+        return false, "File not found: " .. tracebackPathNote 
+    end
+
+    siteCode = "--[[" .. tracebackPathNote .. "]] local args = {...}; local requestData, request, header, cookie, Session, response, body = args[1], args[1].request, args[1].headers, env.cookie, env.dyn.Session, {html = {}, error = {}}, env.dyn.html.Body.new(); " .. siteCode
     
     return load(siteCode)
 end

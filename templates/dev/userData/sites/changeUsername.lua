@@ -1,3 +1,8 @@
+local session, user = env.dyn.loginRequired(requestData)
+if session == false then
+    return user
+end
+
 local body = env.dyn.html.Body.new()
 
 body:addRaw([[
@@ -11,16 +16,13 @@ body:addRaw([[
 
 
 body:addRaw([[<div>]])
-body:addHeader(1, "Login")
+body:addHeader(1, "Change username")
 body:addAction("", "POST", {
-    {"hidden", target = "action", value = "login"},
-    {"input", target = "username", name = "Username:", value = ""},
+    {"hidden", target = "action", value = "changeUsername"},
+    {"input", target = "username", name = "New username:", value = ""},
     {"input", target = "password", name = "Password:", type = "password", value = ""},
-    {"button", type = "supmit", value = "Login"},
+    {"button", type = "supmit", value = "Submit"},
 })
-
-body:addP("")
-body:addRefButton("Sign up", "signup")
 body:addRaw([[</div>]])
 
 return body:generateCode()

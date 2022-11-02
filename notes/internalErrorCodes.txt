@@ -2,7 +2,7 @@
 -1: no valid username given.
 -2: no valind password given.
 
--3: password not matching.
+-3: wring password.
 
 -4: username not found.
 -5: user mail address not found.
@@ -14,9 +14,14 @@
 
 -50: cant set permission.
 
-# singin up
+# singin up / token creation
 -101: username already taken.
 -102: mail address already taken.
+
+-111: password are not matching.
+
+-150: invalid token name.
+-151: invalid token expire time.
 
 # internal user class
 -201: no valid userID given.

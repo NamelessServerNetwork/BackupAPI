@@ -1,11 +1,37 @@
-local env, shared, args = ...
+local user, err, msg = env.dyn.User.new(requestData.request.username)
 
-local suc, reason = env.checkUserLogin(args.username, args.password)
+log("Logging in")
 
-if suc then
-	local loginToken = env.newSession({username = args.username})
+response.error.headline = "Loggin in failed"
+
+if user == false then
+	response.success = false
+	response.error.code = err
+	response.error.err = msg
+	response.html.forwardInternal = "error"
+elseif user:checkPasswd(requestData.request.password) then
+	local suc, err, loginToken = env.newSession(user, -1, "Login", "Created during a login process.", requestData)
 	
-	return {success = true, loginToken = loginToken}
+	--log(loginToken)
+
+	if not suc then
+		response.success = false
+		response.error.err = err
+		response.error.msg = "Unknown error. Pleas contact an admin."
+		response.html.forwardInternal = "error"
+	end
+
+	cookie.new.token = loginToken
+	response.success = true
+	response.token = loginToken
+	response.html.forward = "dashboard"
 else
-	return {success = false, reason = reason}
+	response.success = false
+	response.error.err = "Invalid password"
+	response.html.forwardInternal = "error"
 end
+
+log(suc, reason)
+
+
+return response
