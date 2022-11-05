@@ -4,7 +4,7 @@ package.path = "libs/?.lua;" .. package.path
 local ut = require("UT")
 
 local client = require("DamsClient").new({
-    uri = "https://damsdev.namelessserver.net",
+    uri = "http://localhost:8023",
 })
 
 local suc, headers, response = client:request({
