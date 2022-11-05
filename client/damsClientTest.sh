@@ -7,10 +7,15 @@ local client = require("DamsClient").new({
     uri = "https://damsdev.namelessserver.net",
 })
 
-local headers, response = client:request({
+local suc, headers, response = client:request({
     action = "test",
     value = "TEST",
-})
+}, {})
 
+print("\nSUC")
+print(suc)
+print("\nHEADERS")
+print(ut.tostring(headers))
+print("\nRESPONSE")
 print(ut.tostring(response))
 
