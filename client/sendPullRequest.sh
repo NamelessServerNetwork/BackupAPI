@@ -7,6 +7,7 @@ local conf = {
     --uri = "https://damsdev.namelessserver.net", --backup servers uri
     uri = "http://localhost:8023",
     backup = "test", --rsnapshot instance
+    token = "WZcTDbHLceaOp9BL$Ildna7y8mguaa1X9Cpe2QEliXvOdB2Of",
 }
 
 --===== local funcs ======--
@@ -24,6 +25,7 @@ print("requesting backup pull (" .. conf.backup .. ") from: " .. conf.uri)
 local suc, headers, response = damsClient:request({
     action = "pullBackup",
     backup = conf.backup,
+    token = conf.token,
 })
 
 if not suc then
