@@ -18,12 +18,18 @@ local conf = {
 }
 
 --===== local funcs ======--
-local function mail(subject, text)
-    if type(conf.mail.sender) ~= "string" or type(conf.mail.receiver) ~= "string" then
-        return false
+local function mail(subject, text, ...)
+    local additional = {...}
+
+    for _, arg in ipairs(additional) do
+        text = text .. tostring(arg)
     end
-    print("echo '" .. text .. "' | mail -r " .. conf.mail.sender .. " -s '" .. subject .. "' " .. conf.mail.receiver)
+
     os.execute("echo '" .. text .. "' | mail -r " .. conf.mail.sender .. " -s '" .. subject .. "' " .. conf.mail.receiver)
+end
+if type(conf.mail.sender) ~= "string" or type(conf.mail.receiver) ~= "string" then
+    print("WARN: No mail addresses set!")
+    mail = function() end
 end
 
 local function error(...)
