@@ -1,4 +1,4 @@
-local version = "v0.2d"
+local version = "v0.3"
 
 local DamsClient = {}
 

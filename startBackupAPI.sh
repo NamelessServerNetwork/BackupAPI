@@ -1,5 +1,5 @@
 #!/bin/sh
-version="v0.5"
+version="v1.0"
 echo --===== Starting BackupAPI $version =====--
 
 #./data/bin/love ./data $@

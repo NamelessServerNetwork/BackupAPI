@@ -1,20 +1,18 @@
 #!/bin/lua
 package.path = "libs/?.lua;" .. package.path
-local version = "v0.2"
+local version = "v1.0"
 
 local args = {...}
 
---===== conf =====--
+--===== default conf =====--
 local conf = {
-    name = "TEST_BACKUP_CLIENT",
-    uri = "http://localhost:8023",
+    name = "TEST_BACKUP_CLIENT", --client name
+    uri = "http://localhost:8023", --backup server uri
     backup = "test", --rsnapshot instance
-    token = "WZcTDbHLceaOp9BL$Ildna7y8mguaa1X9Cpe2QEliXvOdB2Of",
+    token = "8vL4lzs8JrKOjYrO$L6mkFrgWqbrcKeItiEEGpxXeTc3NmiAx", --auth token
 
-    mail = {
-        sender = "no-reply@namelessserver.net",
-        receiver = "test@namelessys.de",
-    }
+    from = "no-reply@namelessserver.net", --the mail address error have to be send from
+    to = "test@namelessys.de", --the mail address error have to be send to.
 }
 
 --===== local funcs ======--
@@ -25,9 +23,9 @@ local function mail(subject, text, ...)
         text = text .. tostring(arg)
     end
 
-    os.execute("echo '" .. text .. "' | mail -r " .. conf.mail.sender .. " -s '" .. subject .. "' " .. conf.mail.receiver)
+    os.execute("echo '" .. text .. "' | mail -r " .. conf.from .. " -s '" .. subject .. "' " .. conf.to)
 end
-if type(conf.mail.sender) ~= "string" or type(conf.mail.receiver) ~= "string" then
+if type(conf.from) ~= "string" or type(conf.to) ~= "string" then
     print("WARN: No mail addresses set!")
     mail = function() end
 end
@@ -41,10 +39,36 @@ end
 --===== prog start =====--
 local damsClient = require("DamsClient").new({uri = conf.uri})
 local ut = require("UT")
+local argparse = require("argparse")
 
-if args[1] == "error" or args[1] == "-e" then
-    error("test error\n")
-    os.exit(0)
+do --parse args 
+    local parser = argparse("sendPullRequest", "A lua client to request the pulling of backups from a DAMS API")
+
+    parser:flag("-v --version", "Prints the version and exits."):target("version")
+    parser:flag("-E --error", "Simulates an error and exits."):target("simError")
+
+    parser:option("-b --backup", "Defines the backup that have to be pulled."):target("backup")
+    parser:option("-u --uri", "Defines the URI the request have to be send to."):target("uri")
+    parser:option("-n --name", "Defines the name the client have to introduce itself."):target("name")
+    parser:option("-T --token", "The auth token. WARN: if you pass the token this way it can be seen in command history!"):target("token")
+    parser:option("-f --from", "The mail address error mails are sended from."):target("from")
+    parser:option("-t --to", "The mail address error mails are sended to."):target("to")
+
+    args = parser:parse()
+
+    for i, v in pairs(args) do
+        conf[i] = v
+    end
+
+    if args.version then
+        print(version)
+        os.exit(0)
+    end
+
+    if args.simError then
+        error("Simlulated error\n")
+        os.exit(1)
+    end
 end
 
 print("requesting backup pull (" .. conf.backup .. ") from: " .. conf.uri)
